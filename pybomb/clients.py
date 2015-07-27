@@ -10,6 +10,9 @@ class BaseClient(object):
     RESPONSE_FORMAT_JSON = 'json'
     RESPONSE_FORMAT_XML = 'xml'
 
+    SORT_BY_FIELD = 0
+    SORT_BY_DIRECTION = 1
+
     def __init__(self, api_key, default_format=RESPONSE_FORMAT_JSON):
         """
         :param api_key: string
@@ -34,7 +37,7 @@ class BaseClient(object):
         """
         if (
             sort_by[0] not in self.RESPONSE_FIELDS or
-            not self.RESPONSE_FIELDS[sort_by[0]][self.SORT_FIELD]
+            not self.RESPONSE_FIELDS[sort_by[self.SORT_BY_FIELD]][self.SORT_FIELD]
         ):
             raise Exception('Invalid sort field specified: {}'.format(sort_by[0]))
 
@@ -128,7 +131,7 @@ class GamesClient(BaseClient):
         search_params = {
             'filter': search_filter,
             'field_list': field_list,
-            'sort': '{}:{}'.format(sort_by[0], sort_by[1]),
+            'sort': '{}:{}'.format(sort_by[self.SORT_BY_FIELD], sort_by[self.SORT_BY_DIRECTION]),
             'limit': int(limit),
             'offset': int(offset)
         }
