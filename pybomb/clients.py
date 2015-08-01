@@ -3,15 +3,14 @@ import requests
 
 class BaseClient(object):
 
-    # @todo add the error codes here...
-    # @todo implement validate response
-
     URI_BASE = 'http://www.giantbomb.com/api/{}'
     RESPONSE_FORMAT_JSON = 'json'
     RESPONSE_FORMAT_XML = 'xml'
 
     SORT_BY_FIELD = 0
     SORT_BY_DIRECTION = 1
+
+    RESPONSE_STATUS_OK = 1
 
     def __init__(self, api_key, default_format=RESPONSE_FORMAT_JSON):
         """
@@ -44,7 +43,7 @@ class BaseClient(object):
     def _validate_filter_fields(self, filter_by):
         """
         :param filter_by: dict
-        :raise: Exception
+        :raises: Exception
         """
         for filter_field in filter_by:
             if (
@@ -56,7 +55,7 @@ class BaseClient(object):
     def _create_search_filter(self, filter_by):
         """
         :param filter_by:
-        :return:
+        :return: dict
         """
         return ','.join(
             ['{}:{}'.format(key, value) for key, value in filter_by.iteritems()]
@@ -73,13 +72,23 @@ class BaseClient(object):
             params['format'] = self.default_format
 
         response = requests.get(self.URI_BASE.format(self.RESOURCE_NAME), params)
-        response.raise_for_status()
+        self._validate_response(response)
 
         return response
 
     def _validate_response(self, response):
-        # test for the status_code for responses and throw correct exception
-        pass
+        """
+        :param response: requests.models.Response
+        :raises: Exception
+        """
+        response.raise_for_status()
+        response_data = response.json()
+
+        if response_data['status_code'] != self.RESPONSE_STATUS_OK:
+            raise Exception('Response code {}: {}'.format(
+                response_data['status_code'],
+                response_data['error'])
+            )
 
 
 class GamesClient(BaseClient):
