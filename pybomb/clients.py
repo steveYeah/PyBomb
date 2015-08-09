@@ -1,6 +1,29 @@
 import requests
 
 
+class ClientException(Exception):
+    """
+    Base Exception for module
+    """
+    pass
+
+
+class InvalidReturnFieldException(ClientException):
+    pass
+
+
+class InvalidSortFieldException(ClientException):
+    pass
+
+
+class InvalidFilterFieldException(ClientException):
+    pass
+
+
+class InvalidResponseException(ClientException):
+    pass
+
+
 class BaseClient(object):
 
     URI_BASE = 'http://www.giantbomb.com/api/{}'
@@ -23,34 +46,40 @@ class BaseClient(object):
     def _validate_return_fields(self, return_fields):
         """
         :param return_fields: tuple
-        :raises: Exception
+        :raises: InvalidReturnFieldException
         """
         for return_field in return_fields:
-            if return_field not in self.RESPONSE_FIELDS:
-                raise Exception('Invalid return field specified: {}.format(return_field)')
+            if return_field not in self.RESPONSE_FIELD_MAP:
+                raise InvalidReturnFieldException(
+                    'Invalid return field specified: {}'.format(return_field)
+                )
 
     def _validate_sort_field(self, sort_by):
         """
         :param sort_by: tuple
-        :raises: Exception
+        :raises: InvalidSortFieldException
         """
         if (
-            sort_by[0] not in self.RESPONSE_FIELDS or
-            not self.RESPONSE_FIELDS[sort_by[self.SORT_BY_FIELD]][self.SORT_FIELD]
+            sort_by[self.SORT_BY_FIELD] not in self.RESPONSE_FIELD_MAP or
+            not self.RESPONSE_FIELD_MAP[sort_by[self.SORT_BY_FIELD]][self.SORT_FIELD]
         ):
-            raise Exception('Invalid sort field specified: {}'.format(sort_by[0]))
+            raise InvalidSortFieldException(
+                'Invalid sort field specified: {}'.format(sort_by[self.SORT_BY_FIELD])
+            )
 
     def _validate_filter_fields(self, filter_by):
         """
         :param filter_by: dict
-        :raises: Exception
+        :raises: InvalidFilterFieldException
         """
         for filter_field in filter_by:
             if (
-                filter_field not in self.RESPONSE_FIELDS or
-                not self.RESPONSE_FIELDS[filter_field][self.FILTER_FIELD]
+                filter_field not in self.RESPONSE_FIELD_MAP or
+                not self.RESPONSE_FIELD_MAP[filter_field][self.FILTER_FIELD]
             ):
-                raise Exception('Invalid filter field specified: {}'.format(filter_field))
+                raise InvalidFilterFieldException(
+                    'Invalid filter field specified: {}'.format(filter_field)
+                )
 
     def _create_search_filter(self, filter_by):
         """
@@ -79,13 +108,13 @@ class BaseClient(object):
     def _validate_response(self, response):
         """
         :param response: requests.models.Response
-        :raises: Exception
+        :raises: InvalidResponseException
         """
         response.raise_for_status()
         response_data = response.json()
 
         if response_data['status_code'] != self.RESPONSE_STATUS_OK:
-            raise Exception('Response code {}: {}'.format(
+            raise InvalidResponseException('Response code {}: {}'.format(
                 response_data['status_code'],
                 response_data['error'])
             )
@@ -98,7 +127,7 @@ class GamesClient(BaseClient):
     FILTER_FIELD = 0
     SORT_FIELD = 1
 
-    RESPONSE_FIELDS = {
+    RESPONSE_FIELD_MAP = {
         'aliases': (True, False),
         'api_detail_url': (False, False),
         'date_added': (True, True),
@@ -159,9 +188,9 @@ class GamesClient(BaseClient):
         :return: requests.models.Response
         """
         if platform is None:
-            filter = "name:{}".format(name)
+            filter = 'name:{}'.format(name)
         else:
-            filter = "name:{},platforms:{}".format(name, platform)
+            filter = 'name:{},platforms:{}'.format(name, platform)
 
         search_params = {'filter': filter}
         response = self._query(search_params)
