@@ -93,7 +93,7 @@ class BaseClient(object):
         for return_field in return_fields:
             if return_field not in self.RESPONSE_FIELD_MAP:
                 raise InvalidReturnFieldException(
-                    'Invalid return field specified: {}'.format(return_field)
+                    '"{}" is an invalid return field'.format(return_field)
                 )
 
     def _validate_sort_field(self, sort_by):
@@ -106,7 +106,7 @@ class BaseClient(object):
             not self.RESPONSE_FIELD_MAP[sort_by[self.SORT_BY_FIELD]][self.SORT_FIELD]
         ):
             raise InvalidSortFieldException(
-                'Invalid sort field specified: {}'.format(sort_by[self.SORT_BY_FIELD])
+                '"{}" is an invalid sort field'.format(sort_by[self.SORT_BY_FIELD])
             )
 
     def _validate_filter_fields(self, filter_by):
@@ -120,7 +120,7 @@ class BaseClient(object):
                 not self.RESPONSE_FIELD_MAP[filter_field][self.FILTER_FIELD]
             ):
                 raise InvalidFilterFieldException(
-                    'Invalid filter field specified: {}'.format(filter_field)
+                    '"{}" is an invalid filter field'.format(filter_field)
                 )
 
     def _create_search_filter(self, filter_by):
@@ -153,6 +153,8 @@ class BaseClient(object):
         :param response: requests.models.Response
         :raises: InvalidResponseException
         """
+
+        # @todo catch and raise InvalidResponseException
         response.raise_for_status()
         response_data = response.json()
 
