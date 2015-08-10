@@ -1,3 +1,10 @@
+# @todo restructure
+# @todo add tests
+# @todo pep8
+# @todo pylint
+# @todo add platform IDs
+
+
 import requests
 
 
@@ -9,24 +16,47 @@ class ClientException(Exception):
 
 
 class InvalidReturnFieldException(ClientException):
+    """
+    Exception for invalid return fields
+    """
     pass
 
 
 class InvalidSortFieldException(ClientException):
+    """
+    Exception for invalid sort fields
+    """
     pass
 
 
 class InvalidFilterFieldException(ClientException):
+    """
+    Exception for invalid filter fields
+    """
     pass
 
 
 class InvalidResponseException(ClientException):
+    """
+    Exception thrown when receiving an invalid response from selected resource
+    """
+    pass
+
+
+# @todo implement
+class Response(object):
+    """
+    Represents a response from all resources
+    """
     pass
 
 
 class BaseClient(object):
+    """
+    Base class for API resource clients
+    """
 
-    URI_BASE = 'http://www.giantbomb.com/api/{}'
+    URI_BASE = 'http://www.giantbomb.com/api/'
     RESPONSE_FORMAT_JSON = 'json'
     RESPONSE_FORMAT_XML = 'xml'
 
@@ -40,8 +70,20 @@ class BaseClient(object):
         :param api_key: string
         :param default_format: string
         """
-        self.api_key = api_key
-        self.default_format = default_format
+        self._api_key = api_key
+        self._default_format = default_format
+
+    @property
+    def api_key(self):
+        return self._api_key
+
+    @api_key.setter
+    def api_key(self, api_key):
+        self._api_key = api_key
+
+    @property
+    def default_format(self):
+        return self._default_format
 
     def _validate_return_fields(self, return_fields):
         """
@@ -95,14 +137,15 @@ class BaseClient(object):
         :param params: dict
         :return: requests.models.Response
         """
-        params['api_key'] = self.api_key
+        params['api_key'] = self._api_key
 
         if 'format' not in params:
-            params['format'] = self.default_format
+            params['format'] = self._default_format
 
-        response = requests.get(self.URI_BASE.format(self.RESOURCE_NAME), params)
+        response = requests.get(self.URI_BASE + self.RESOURCE_NAME, params)
         self._validate_response(response)
 
+        # @todo map to response object
         return response
 
     def _validate_response(self, response):
@@ -121,6 +164,9 @@ class BaseClient(object):
 
 
 class GamesClient(BaseClient):
+    """
+    Client for the 'games' API resource
+    """
 
     RESOURCE_NAME = 'games'
 

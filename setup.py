@@ -14,6 +14,7 @@ config = {
     'packages': ['pybomb'],
     'install_requires': [
         'nose',
+        'requests',
     ]
 }
 
