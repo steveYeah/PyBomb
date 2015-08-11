@@ -43,12 +43,71 @@ class InvalidResponseException(ClientException):
     pass
 
 
-# @todo implement
-class Response(object):
+class BadRequestException(ClientException):
     """
-    Represents a response from all resources
+    Exception thrown when attempting to send a bad request
     """
     pass
+
+
+class Response(object):
+    """
+    An API response
+    """
+
+    def __init__(self, uri, num_results, results):
+        """
+        :param uri: string
+        :param num_results: int
+        :param results: list
+        """
+        self.__uri = uri
+        self.__num_results = num_results
+        self.__results = results
+
+    @property
+    def uri(self):
+        """
+        Origin of response
+
+        :return: string
+        """
+        return self.__uri
+
+    @property
+    def num_results(self):
+        """
+        Number of results
+
+        :return: int
+        """
+        return self.__num_results
+
+    @property
+    def results(self):
+        """
+        List of core results
+
+        :return: list
+        """
+        return self.__results
+
+
+def create_response(response):
+    """
+    Create response
+
+    :param response: requests.models.Response
+    :return: pybomb.clients.Response
+    """
+
+    response_json = response.json()
+
+    return Response(
+        response.url,
+        response_json['number_of_total_results'],
+        response_json['results']
+    )
 
 
 class BaseClient(object):
@@ -75,14 +134,27 @@ class BaseClient(object):
 
     @property
     def api_key(self):
+        """
+        Giant Bomb API key
+
+        :return: string
+        """
         return self._api_key
 
     @api_key.setter
     def api_key(self, api_key):
+        """
+        :param api_key: string
+        """
         self._api_key = api_key
 
     @property
     def default_format(self):
+        """
+        Default API response type
+
+        :return: string
+        """
         return self._default_format
 
     def _validate_return_fields(self, return_fields):
@@ -135,7 +207,7 @@ class BaseClient(object):
     def _query(self, params):
         """
         :param params: dict
-        :return: requests.models.Response
+        :return: pybomb.clients.Response
         """
         params['api_key'] = self._api_key
 
@@ -145,19 +217,20 @@ class BaseClient(object):
         response = requests.get(self.URI_BASE + self.RESOURCE_NAME, params)
         self._validate_response(response)
 
-        # @todo map to response object
-        return response
+        return create_response(response)
 
     def _validate_response(self, response):
         """
         :param response: requests.models.Response
         :raises: InvalidResponseException
+        :raises: BadRequestException
         """
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as http_error:
+            raise BadRequestException(http_error.message)
 
-        # @todo catch and raise InvalidResponseException
-        response.raise_for_status()
         response_data = response.json()
-
         if response_data['status_code'] != self.RESPONSE_STATUS_OK:
             raise InvalidResponseException('Response code {}: {}'.format(
                 response_data['status_code'],
@@ -205,7 +278,7 @@ class GamesClient(BaseClient):
         :param offset: int
         :param sort_by: tuple
         :param filter_by: dict
-        :return: requests.models.Response
+        :return: pybomb.clients.Response
         """
         self._validate_sort_field(sort_by)
         self._validate_return_fields(return_fields)
@@ -233,7 +306,7 @@ class GamesClient(BaseClient):
 
         :param name: string
         :param platform: int
-        :return: requests.models.Response
+        :return: pybomb.clients.Response
         """
         if platform is None:
             filter = 'name:{}'.format(name)
