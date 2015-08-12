@@ -13,8 +13,6 @@ class GamesClient(BaseClient):
 
     RESOURCE_NAME = 'games'
 
-
-
     RESPONSE_FIELD_MAP = {
         'aliases': (True, False),
         'api_detail_url': (False, False),
