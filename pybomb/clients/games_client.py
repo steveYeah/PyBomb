@@ -32,7 +32,8 @@ class GamesClient(BaseClient):
         'site_detail_url': (False, False),
     }
 
-    def search(self, filter_by, return_fields, sort_by, desc=True, limit=None, offset=None):
+    def search(self, filter_by, return_fields=None, sort_by=None, desc=True, limit=None,
+               offset=None):
         """
         Full search of games resource, supporting all search fields available in API
         http://www.giantbomb.com/api/documentation#toc-0-15
@@ -46,24 +47,31 @@ class GamesClient(BaseClient):
         :return: pybomb.clients.Response
         """
         self._validate_filter_fields(filter_by)
-        self._validate_return_fields(return_fields)
-        self._validate_sort_field(sort_by)
-
         search_filter = self._create_search_filter(filter_by)
-        field_list = ','.join(return_fields)
 
-        if desc:
-            direction = self.SORT_ORDER_DESCENDING
-        else:
-            direction = self.SORT_ORDER_ASCENDING
+        search_params = {'filter': search_filter}
 
-        search_params = {
-            'filter': search_filter,
-            'field_list': field_list,
-            'sort': '{}:{}'.format(sort_by, direction),
-            'limit': int(limit),
-            'offset': int(offset)
-        }
+        if return_fields is not None:
+            self._validate_return_fields(return_fields)
+            field_list = ','.join(return_fields)
+
+            search_params['field_list'] = field_list
+
+        if sort_by is not None:
+            self._validate_sort_field(sort_by)
+
+            if desc:
+                direction = self.SORT_ORDER_DESCENDING
+            else:
+                direction = self.SORT_ORDER_ASCENDING
+
+            search_params['sort'] = '{}:{}'.format(sort_by, direction)
+
+        if limit is not None:
+            search_params['limit'] = int(limit)
+
+        if offset is not None:
+            search_params['offset'] = int(offset)
 
         response = self._query(search_params)
 
