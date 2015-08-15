@@ -19,11 +19,11 @@ class BaseClient(object):
 
     RESOURCE_NAME = None
 
-    SORT_BY_FIELD = 0
-    SORT_BY_DIRECTION = 1
+    SORT_ORDER_ASCENDING = 'asc'
+    SORT_ORDER_DESCENDING = 'desc'
 
-    FILTER_FIELD = 0
-    SORT_FIELD = 1
+    PARAM_FILTER_FIELD = 0
+    PARAM_SORT_FIELD = 1
 
     def __init__(self, api_key, default_format=RESPONSE_FORMAT_JSON):
         """
@@ -71,15 +71,13 @@ class BaseClient(object):
 
     def _validate_sort_field(self, sort_by):
         """
-        :param sort_by: tuple
+        :param sort_by: string
         :raises: pybomb.exceptions.InvalidSortFieldException
         """
-        if (
-            sort_by[self.SORT_BY_FIELD] not in self.RESPONSE_FIELD_MAP or
-            not self.RESPONSE_FIELD_MAP[sort_by[self.SORT_BY_FIELD]][self.SORT_FIELD]
-        ):
+        if (sort_by not in self.RESPONSE_FIELD_MAP or
+                not self.RESPONSE_FIELD_MAP[sort_by][self.PARAM_SORT_FIELD]):
             raise pybomb.exceptions.InvalidSortFieldException(
-                '"{}" is an invalid sort field'.format(sort_by[self.SORT_BY_FIELD])
+                '"{}" is an invalid sort field'.format(sort_by)
             )
 
     def _validate_filter_fields(self, filter_by):
@@ -88,10 +86,8 @@ class BaseClient(object):
         :raises: pybomb.exceptions.InvalidFilterFieldException
         """
         for filter_field in filter_by:
-            if (
-                filter_field not in self.RESPONSE_FIELD_MAP or
-                not self.RESPONSE_FIELD_MAP[filter_field][self.FILTER_FIELD]
-            ):
+            if (filter_field not in self.RESPONSE_FIELD_MAP or
+                    not self.RESPONSE_FIELD_MAP[filter_field][self.PARAM_FILTER_FIELD]):
                 raise pybomb.exceptions.InvalidFilterFieldException(
                     '"{}" is an invalid filter field'.format(filter_field)
                 )
@@ -102,7 +98,8 @@ class BaseClient(object):
         :return: dict
         """
         return ','.join(
-            ['{}:{}'.format(key, value) for key, value in filter_by.iteritems()]
+            ['{}:{}'.format(key, value) for
+             key, value in filter_by.iteritems() if value is not None]
         )
 
     def _query(self, params):
@@ -115,10 +112,17 @@ class BaseClient(object):
         if 'format' not in params:
             params['format'] = self._default_format
 
-        response = requests.get(self.URI_BASE + self.RESOURCE_NAME, params=params)
+        response = self._query_api(params)
         self._validate_response(response)
 
         return pybomb.response.create_response(response)
+
+    def _query_api(self, params):
+        """
+        :param params: dict
+        :return: requests.models.Response
+        """
+        return requests.get(self.URI_BASE + self.RESOURCE_NAME, params=params)
 
     def _validate_response(self, response):
         """
@@ -133,7 +137,9 @@ class BaseClient(object):
 
         response_data = response.json()
         if response_data['status_code'] != self.RESPONSE_STATUS_OK:
-            raise pybomb.exceptions.InvalidResponseException('Response code {}: {}'.format(
-                response_data['status_code'],
-                response_data['error'])
+            raise pybomb.exceptions.InvalidResponseException(
+                'Response code {}: {}'.format(
+                    response_data['status_code'],
+                    response_data['error']
+                )
             )

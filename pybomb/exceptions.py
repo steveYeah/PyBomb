@@ -3,14 +3,7 @@ Exceptions used in this library
 """
 
 
-class PyBombException(Exception):
-    """
-    Base Exception for library
-    """
-    pass
-
-
-class ClientException(PyBombException):
+class ClientException(Exception):
     """
     Base Client Exception for module
     """

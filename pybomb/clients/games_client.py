@@ -32,29 +32,35 @@ class GamesClient(BaseClient):
         'site_detail_url': (False, False),
     }
 
-    def search(self, return_fields, limit, offset, sort_by, filter_by):
+    def search(self, filter_by, return_fields, sort_by, desc=True, limit=None, offset=None):
         """
         Full search of games resource, supporting all search fields available in API
         http://www.giantbomb.com/api/documentation#toc-0-15
 
+        :param filter_by: dict
         :param return_fields: tuple
+        :param sort_by: string
+        :param desc: bool
         :param limit: int
         :param offset: int
-        :param sort_by: tuple
-        :param filter_by: dict
         :return: pybomb.clients.Response
         """
-        self._validate_sort_field(sort_by)
-        self._validate_return_fields(return_fields)
         self._validate_filter_fields(filter_by)
+        self._validate_return_fields(return_fields)
+        self._validate_sort_field(sort_by)
 
         search_filter = self._create_search_filter(filter_by)
         field_list = ','.join(return_fields)
 
+        if desc:
+            direction = self.SORT_ORDER_DESCENDING
+        else:
+            direction = self.SORT_ORDER_ASCENDING
+
         search_params = {
             'filter': search_filter,
             'field_list': field_list,
-            'sort': '{}:{}'.format(sort_by[self.SORT_BY_FIELD], sort_by[self.SORT_BY_DIRECTION]),
+            'sort': '{}:{}'.format(sort_by, direction),
             'limit': int(limit),
             'offset': int(offset)
         }
@@ -63,13 +69,15 @@ class GamesClient(BaseClient):
 
         return response
 
-    def quick_search(self, name, platform=None):
+    def quick_search(self, name, platform=None, sort_by=None, desc=True):
         """
         Quick search method that allows you to search for a game using only the
         title and the platform
 
         :param name: string
         :param platform: int
+        :param sort_by: string
+        :param desc: bool
         :return: pybomb.clients.Response
         """
         if platform is None:
@@ -78,6 +86,15 @@ class GamesClient(BaseClient):
             query_filter = 'name:{},platforms:{}'.format(name, platform)
 
         search_params = {'filter': query_filter}
+
+        if sort_by is not None:
+            if desc:
+                direction = self.SORT_ORDER_DESCENDING
+            else:
+                direction = self.SORT_ORDER_ASCENDING
+
+            search_params['sort'] = '{}:{}'.format(sort_by, direction),
+
         response = self._query(search_params)
 
         return response
