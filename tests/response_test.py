@@ -8,12 +8,14 @@ def setup():
     class MockResponse(object):
         def __init__(self):
             self.url = ''
-            self.num_results = 1
+            self.num_total_results = 1
+            self.num_page_results = 1
             self.results = ['result']
 
         def json(self):
             return {
-                'number_of_total_results': self.num_results,
+                'number_of_total_results': self.num_total_results,
+                'number_of_page_results': self.num_page_results,
                 'results': self.results
             }
 
@@ -29,8 +31,12 @@ def test_response_factory_response_object_should_have_correct_uri():
     assert pybomb_response.uri == mock_response.url
 
 
-def test_response_factory_response_object_should_have_correct_num_results():
-    assert pybomb_response.num_results == mock_response.num_results
+def test_response_factory_response_object_should_have_correct_num_total_results():
+    assert pybomb_response.num_total_results == mock_response.num_total_results
+
+
+def test_response_factory_response_object_should_have_correct_num_page_results():
+    assert pybomb_response.num_page_results == mock_response.num_page_results
 
 
 def test_response_factory_response_object_results_should_be_list():

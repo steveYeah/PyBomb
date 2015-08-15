@@ -10,14 +10,17 @@ def setup():
     class MockResponse(object):
         def __init__(self):
             self.url = ''
-            self.num_results = 1
+            self.num_total_results = 1
+            self.num_page_results = 1
             self.results = ['result']
+            self.status_code = GamesClient.RESPONSE_STATUS_OK
 
         def json(self):
             return {
-                'number_of_total_results': self.num_results,
+                'number_of_total_results': self.num_total_results,
+                'number_of_page_results': self.num_page_results,
                 'results': self.results,
-                'status_code': pybomb.GamesClient.RESPONSE_STATUS_OK
+                'status_code': self.status_code,
             }
 
         def raise_for_status(self):
