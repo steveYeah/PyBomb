@@ -2,7 +2,6 @@
 Client for the Games resource of GiantBomb
 http://www.giantbomb.com/api/documentation#toc-0-15
 """
-
 from pybomb.clients.base_client import BaseClient
 
 

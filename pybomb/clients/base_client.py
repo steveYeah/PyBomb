@@ -1,7 +1,6 @@
 """
 Base client to extend to create clients for endpoints of the GiantBomb API
 """
-
 import requests
 import pybomb.exceptions
 import pybomb.clients.response
