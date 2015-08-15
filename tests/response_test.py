@@ -1,5 +1,5 @@
 from nose.tools import *
-from pybomb.clients import response
+from pybomb import response
 
 
 def setup():

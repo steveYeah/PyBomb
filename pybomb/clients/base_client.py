@@ -3,7 +3,7 @@ Base client to extend to create clients for endpoints of the GiantBomb API
 """
 import requests
 import pybomb.exceptions
-import pybomb.clients.response
+import pybomb.response
 
 
 class BaseClient(object):
@@ -118,7 +118,7 @@ class BaseClient(object):
         response = requests.get(self.URI_BASE + self.RESOURCE_NAME, params=params)
         self._validate_response(response)
 
-        return pybomb.clients.response.create_response(response)
+        return pybomb.response.create_response(response)
 
     def _validate_response(self, response):
         """
