@@ -9,8 +9,9 @@ config = {
     'version': '0.1',
     'author': 'Steve Hutchins',
     'author_email': 'hutchinsteve@gmail.com',
-    'url': '',
-    'download_url': '',
+    'url': 'https://github.com/steveYeah/PyBomb',
+    'download_url': 'https://github.com/steveYeah/PyBomb/archive/v0.1.tar.gz',
+    'keywords': ['giant bomb', 'giant', 'bomb', 'game', 'api'],
     'packages': ['pybomb'],
     'install_requires': [
         'nose',
