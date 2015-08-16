@@ -9,7 +9,14 @@ This will go into version 1.0 when all resources are supported.
 ###Currently Supported Resources:
 * games
 
-###Examples...
+Install
+-------
+```
+pip install pybomb
+```
+
+Examples
+--------
 ####GamesClient - search
 ```
 import pybomb
