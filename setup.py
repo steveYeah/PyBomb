@@ -6,7 +6,7 @@ except ImportError:
 config = {
     'name': 'pybomb',
     'description': 'Client for the Giant Bomb API',
-    'version': '0.1',
+    'version': '0.2',
     'author': 'Steve Hutchins',
     'author_email': 'hutchinsteve@gmail.com',
     'url': 'https://github.com/steveYeah/PyBomb',
