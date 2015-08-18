@@ -11,7 +11,7 @@ config = {
     'author_email': 'hutchinsteve@gmail.com',
     'url': 'https://github.com/steveYeah/PyBomb',
     'download_url': 'https://github.com/steveYeah/PyBomb/archive/v0.1.1.tar.gz',
-    'keywords': ['giant', 'bomb', 'game', 'api', 'client],
+    'keywords': ['giant', 'bomb', 'game', 'api', 'client'],
     'packages': ['pybomb', 'pybomb.clients'],
     'install_requires': [
         'nose',
