@@ -6,7 +6,8 @@ from pybomb.clients.games_client import GamesClient
 
 
 def setup():
-    global games_client, return_fields, sort_by, filter_by, limit, offset
+    global games_client, bad_response_client, bad_request_client, return_fields, sort_by, \
+        filter_by, limit, offset
 
     class MockResponse(object):
         def __init__(self):
@@ -36,6 +37,32 @@ def setup():
 
     games_client = GamesClient('mock_api_key')
     games_client._query_api = _query_api
+
+    class MockBadResponse(object):
+        def __init__(self):
+            self.status_code = 100
+
+        def json(self):
+            return {
+                'status_code': self.status_code,
+                'error': 'Invalid API Key'
+            }
+
+        def raise_for_status(self):
+            return None
+
+    def _query_api_bad(params):
+        """
+        :param params: dict
+        :return: requests.models.Response
+        """
+        return MockBadResponse()
+
+    bad_response_client = GamesClient('mock key')
+    bad_response_client._query_api = _query_api_bad
+
+    bad_request_client = GamesClient('mock key')
+    bad_request_client.URI_BASE = 'http://httpbin.org/status/404'
 
     return_fields = (
         'api_detail_url',
@@ -126,11 +153,11 @@ def test_full_search_invalid_sort_by_field():
 @raises(pybomb.exceptions.InvalidSortFieldException)
 def test_full_search_invalid_sort_by_field_not_a_valid_sort():
     """
-    pybomb.exceptions.InvalidSortFieldException is thrown when trying to use a valid field that cannot be used for sorting
+    pybomb.exceptions.InvalidSortFieldException is thrown when trying to use a valid field that
+    cannot be used for sorting
     """
     invalid_sort_by = 'aliases'
     games_client.search(filter_by, return_fields, invalid_sort_by, True, limit, offset)
-
 
 
 @raises(ValueError)
@@ -162,86 +189,34 @@ def test_quick_search_should_return_response():
 @attr('web')
 @raises(pybomb.exceptions.BadRequestException)
 def test_search_bad_request():
-    bad_request_client = GamesClient('mock key')
-    bad_request_client.URI_BASE = 'http://httpbin.org/status/404'
-
+    """
+    pybomb.exceptions.BadRequestException is thrown if the search request doesn't result in 200
+    response
+    """
     bad_request_client.search(filter_by, return_fields, sort_by, False, limit, offset)
 
 
 @attr('web')
 @raises(pybomb.exceptions.BadRequestException)
 def test_quick_search_bad_request():
-    bad_request_client = GamesClient('mock key')
-    bad_request_client.URI_BASE = 'http://httpbin.org/status/404'
-
+    """
+    pybomb.exceptions.BadRequestException is thrown if the quick search request doesn't result in
+    200 response
+    """
     bad_request_client.quick_search('deus ex', pybomb.PS3)
 
 
 @raises(pybomb.exceptions.InvalidResponseException)
 def test_search_bad_response():
-    class MockBadResponse(object):
-        def __init__(self):
-            self.url = ''
-            self.num_total_results = 1
-            self.num_page_results = 1
-            self.results = ['result']
-            self.status_code = 100
-
-        def json(self):
-            return {
-                'number_of_total_results': self.num_total_results,
-                'number_of_page_results': self.num_page_results,
-                'results': self.results,
-                'status_code': self.status_code,
-                'error': 'Invalid API Key'
-            }
-
-        def raise_for_status(self):
-            return None
-
-    def _query_api(params):
-        """
-        :param params: dict
-        :return: requests.models.Response
-        """
-        return MockBadResponse()
-
-    bad_response_client = GamesClient('mock key')
-    bad_response_client._query_api = _query_api
-
+    """
+    pybomb.exceptions.InvalidResponseException is thrown is the search response code is not 1
+    """
     bad_response_client.search(filter_by, return_fields, sort_by, False, limit, offset)
 
 
 @raises(pybomb.exceptions.InvalidResponseException)
 def test_quick_search_bad_response():
-    class MockBadResponse(object):
-        def __init__(self):
-            self.url = ''
-            self.num_total_results = 1
-            self.num_page_results = 1
-            self.results = ['result']
-            self.status_code = 100
-
-        def json(self):
-            return {
-                'number_of_total_results': self.num_total_results,
-                'number_of_page_results': self.num_page_results,
-                'results': self.results,
-                'status_code': self.status_code,
-                'error': 'Invalid API Key'
-            }
-
-        def raise_for_status(self):
-            return None
-
-    def _query_api(params):
-        """
-        :param params: dict
-        :return: requests.models.Response
-        """
-        return MockBadResponse()
-
-    bad_response_client = GamesClient('mock key')
-    bad_response_client._query_api = _query_api
-
+    """
+    pybomb.exceptions.InvalidResponseException is thrown is the quick search response code is not 1
+    """
     bad_response_client.quick_search('deus ex', pybomb.PS3)
