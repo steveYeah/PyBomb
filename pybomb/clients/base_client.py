@@ -66,7 +66,7 @@ class BaseClient(object):
         for return_field in return_fields:
             if return_field not in self.RESPONSE_FIELD_MAP:
                 raise pybomb.exceptions.InvalidReturnFieldException(
-                    '"{}" is an invalid return field'.format(return_field)
+                    '"{0}" is an invalid return field'.format(return_field)
                 )
 
     def _validate_sort_field(self, sort_by):
@@ -77,7 +77,7 @@ class BaseClient(object):
         if (sort_by not in self.RESPONSE_FIELD_MAP or
                 not self.RESPONSE_FIELD_MAP[sort_by][self.PARAM_SORT_FIELD]):
             raise pybomb.exceptions.InvalidSortFieldException(
-                '"{}" is an invalid sort field'.format(sort_by)
+                '"{0}" is an invalid sort field'.format(sort_by)
             )
 
     def _validate_filter_fields(self, filter_by):
@@ -89,7 +89,7 @@ class BaseClient(object):
             if (filter_field not in self.RESPONSE_FIELD_MAP or
                     not self.RESPONSE_FIELD_MAP[filter_field][self.PARAM_FILTER_FIELD]):
                 raise pybomb.exceptions.InvalidFilterFieldException(
-                    '"{}" is an invalid filter field'.format(filter_field)
+                    '"{0}" is an invalid filter field'.format(filter_field)
                 )
 
     def _create_search_filter(self, filter_by):
@@ -98,7 +98,7 @@ class BaseClient(object):
         :return: dict
         """
         return ','.join(
-            ['{}:{}'.format(key, value) for
+            ['{0}:{1}'.format(key, value) for
              key, value in filter_by.iteritems() if value is not None]
         )
 
@@ -138,7 +138,7 @@ class BaseClient(object):
         response_data = response.json()
         if response_data['status_code'] != self.RESPONSE_STATUS_OK:
             raise pybomb.exceptions.InvalidResponseException(
-                'Response code {}: {}'.format(
+                'Response code {0}: {1}'.format(
                     response_data['status_code'],
                     response_data['error']
                 )

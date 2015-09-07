@@ -65,7 +65,7 @@ class GamesClient(BaseClient):
             else:
                 direction = self.SORT_ORDER_ASCENDING
 
-            search_params['sort'] = '{}:{}'.format(sort_by, direction)
+            search_params['sort'] = '{0}:{1}'.format(sort_by, direction)
 
         if limit is not None:
             search_params['limit'] = int(limit)
@@ -89,9 +89,9 @@ class GamesClient(BaseClient):
         :return: pybomb.clients.Response
         """
         if platform is None:
-            query_filter = 'name:{}'.format(name)
+            query_filter = 'name:{0}'.format(name)
         else:
-            query_filter = 'name:{},platforms:{}'.format(name, platform)
+            query_filter = 'name:{0},platforms:{1}'.format(name, platform)
 
         search_params = {'filter': query_filter}
 
@@ -101,7 +101,7 @@ class GamesClient(BaseClient):
             else:
                 direction = self.SORT_ORDER_ASCENDING
 
-            search_params['sort'] = '{}:{}'.format(sort_by, direction),
+            search_params['sort'] = '{0}:{1}'.format(sort_by, direction),
 
         response = self._query(search_params)
 
