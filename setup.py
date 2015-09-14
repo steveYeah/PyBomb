@@ -19,7 +19,8 @@ config = {
     'install_requires': [
         'nose',
         'requests',
-        'setuptools-markdown'
+        'pandoc',
+        'setuptools-markdown',
     ]
 }
 
