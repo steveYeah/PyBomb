@@ -19,7 +19,7 @@ config = {
     'install_requires': [
         'nose',
         'requests',
-        'setuptools-markdown'
+        'setuptools-markdown',
     ]
 }
 
