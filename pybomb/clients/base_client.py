@@ -99,7 +99,7 @@ class BaseClient(object):
         """
         return ','.join(
             ['{0}:{1}'.format(key, value) for
-             key, value in filter_by.iteritems() if value is not None]
+             key, value in filter_by.items() if value is not None]
         )
 
     def _query(self, params):
@@ -133,7 +133,7 @@ class BaseClient(object):
         try:
             response.raise_for_status()
         except requests.exceptions.HTTPError as http_error:
-            raise pybomb.exceptions.BadRequestException(http_error.message)
+            raise pybomb.exceptions.BadRequestException(str(http_error))
 
         response_data = response.json()
         if response_data['status_code'] != self.RESPONSE_STATUS_OK:
