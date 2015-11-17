@@ -4,11 +4,23 @@ except ImportError:
     from distutils.core import setup
 
 
+def markdown_description(file_name):
+    desc = pypandoc.convert(file_name, 'rst', format='md')
+    return desc
+
+
+try:
+    import pypandoc
+    long_description = markdown_description('README.md')
+except ImportError:
+    long_description = 'See README.md'
+
+
 config = {
     'name': 'pybomb',
     'description': 'Client for the Giant Bomb API',
-    'version': '0.1.3',
-    'long_description_markdown_filename': 'README.md',
+    'version': '0.1.4rc2',
+    'long_description': long_description,
     'license': "MIT",
     'author': 'Steve Hutchins',
     'author_email': 'hutchinsteve@gmail.com',
@@ -19,7 +31,6 @@ config = {
     'install_requires': [
         'nose',
         'requests',
-        'setuptools-markdown',
     ]
 }
 
