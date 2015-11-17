@@ -19,13 +19,13 @@ except ImportError:
 config = {
     'name': 'pybomb',
     'description': 'Client for the Giant Bomb API',
-    'version': '0.1.4rc2',
+    'version': '0.1.4',
     'long_description': long_description,
     'license': "MIT",
     'author': 'Steve Hutchins',
     'author_email': 'hutchinsteve@gmail.com',
     'url': 'https://github.com/steveYeah/PyBomb',
-    'download_url': 'https://github.com/steveYeah/PyBomb/archive/v0.1.4rc2.tar.gz',
+    'download_url': 'https://github.com/steveYeah/PyBomb/archive/v0.1.4.tar.gz',
     'keywords': ['giant', 'bomb', 'game', 'api', 'client'],
     'packages': ['pybomb', 'pybomb.clients'],
     'install_requires': [
