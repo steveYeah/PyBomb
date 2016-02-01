@@ -14,7 +14,7 @@ class Response(namedtuple('Response', ('uri', 'num_page_results', 'num_total_res
         """
         Response factory
 
-        :param response: requests.models.Response
+        :param response_data: requests.models.Response
         :return: pybomb.clients.Response
         """
 
