@@ -2,10 +2,10 @@
 Client for the Games resource of GiantBomb
 http://www.giantbomb.com/api/documentation#toc-0-15
 """
-from pybomb.clients.base_client import BaseClient
+import pybomb.clients.base_client as base_client
 
 
-class GamesClient(BaseClient):
+class GamesClient(base_client.BaseClient):
     """
     Client for the 'games' API resource
     """
@@ -13,23 +13,23 @@ class GamesClient(BaseClient):
     RESOURCE_NAME = 'games'
 
     RESPONSE_FIELD_MAP = {
-        'aliases': (True, False),
-        'api_detail_url': (False, False),
-        'date_added': (True, True),
-        'date_last_updated': (True, True),
-        'deck': (False, False),
-        'description': (False, False),
-        'expected_release_month': (True, False),
-        'expected_release_quarter': (True, False),
-        'expected_release_year': (True, False),
-        'id': (True, True),
-        'image': (False, False),
-        'name': (True, True),
-        'number_of_user_reviews': (True, True),
-        'original_game_rating': (False, True),
-        'original_release_date': (True, True),
-        'platforms': (True, False),
-        'site_detail_url': (False, False),
+        'aliases': base_client.ResponseParam(True, False),
+        'api_detail_url': base_client.ResponseParam(False, False),
+        'date_added': base_client.ResponseParam(True, True),
+        'date_last_updated': base_client.ResponseParam(True, True),
+        'deck': base_client.ResponseParam(False, False),
+        'description': base_client.ResponseParam(False, False),
+        'expected_release_month': base_client.ResponseParam(True, False),
+        'expected_release_quarter': base_client.ResponseParam(True, False),
+        'expected_release_year': base_client.ResponseParam(True, False),
+        'id': base_client.ResponseParam(True, True),
+        'image': base_client.ResponseParam(False, False),
+        'name': base_client.ResponseParam(True, True),
+        'number_of_user_reviews': base_client.ResponseParam(True, True),
+        'original_game_rating': base_client.ResponseParam(False, True),
+        'original_release_date': base_client.ResponseParam(True, True),
+        'platforms': base_client.ResponseParam(True, False),
+        'site_detail_url': base_client.ResponseParam(False, False),
     }
 
     def search(self, filter_by, return_fields=None, sort_by=None, desc=True, limit=None,

@@ -1,9 +1,15 @@
 """
 Base client to extend to create clients for endpoints of the GiantBomb API
 """
+from collections import namedtuple
+
 import requests
+
 import pybomb.exceptions
 import pybomb.response
+
+
+ResponseParam = namedtuple('ResponseParam', ('is_filter', 'is_sort'))
 
 
 class BaseClient(object):
@@ -21,9 +27,6 @@ class BaseClient(object):
 
     SORT_ORDER_ASCENDING = 'asc'
     SORT_ORDER_DESCENDING = 'desc'
-
-    PARAM_FILTER_FIELD = 0
-    PARAM_SORT_FIELD = 1
 
     def __init__(self, api_key, default_format=RESPONSE_FORMAT_JSON):
         """
@@ -75,7 +78,7 @@ class BaseClient(object):
         :raises: pybomb.exceptions.InvalidSortFieldException
         """
         if (sort_by not in self.RESPONSE_FIELD_MAP or
-                not self.RESPONSE_FIELD_MAP[sort_by][self.PARAM_SORT_FIELD]):
+                not self.RESPONSE_FIELD_MAP[sort_by].is_sort):
             raise pybomb.exceptions.InvalidSortFieldException(
                 '"{0}" is an invalid sort field'.format(sort_by)
             )
@@ -87,12 +90,13 @@ class BaseClient(object):
         """
         for filter_field in filter_by:
             if (filter_field not in self.RESPONSE_FIELD_MAP or
-                    not self.RESPONSE_FIELD_MAP[filter_field][self.PARAM_FILTER_FIELD]):
+                    not self.RESPONSE_FIELD_MAP[filter_field].is_filter):
                 raise pybomb.exceptions.InvalidFilterFieldException(
                     '"{0}" is an invalid filter field'.format(filter_field)
                 )
 
-    def _create_search_filter(self, filter_by):
+    @staticmethod
+    def _create_search_filter(filter_by):
         """
         :param filter_by:
         :return: dict
@@ -115,7 +119,7 @@ class BaseClient(object):
         response = self._query_api(params)
         self._validate_response(response)
 
-        return pybomb.response.create_response(response)
+        return pybomb.response.Response.from_response_data(response)
 
     def _query_api(self, params):
         """

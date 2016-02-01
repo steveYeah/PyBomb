@@ -20,7 +20,7 @@ def setup():
             }
 
     mock_response = MockResponse()
-    pybomb_response = response.create_response(mock_response)
+    pybomb_response = response.Response.from_response_data(mock_response)
 
 
 def test_response_factory_should_return_response_object():
