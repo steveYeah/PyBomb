@@ -7,9 +7,6 @@ python:
   - "3.4"
 
 # command to install dependencies
-before_install:
-  - sudo apt-get install pandoc
-
 install: "python setup.py install"
 
 # command to run tests
