@@ -115,7 +115,7 @@ class BaseClient(object):
         response = self._query_api(params)
         self._validate_response(response)
 
-        return pybomb.response.create_response(response)
+        return pybomb.response.Response.from_response_data(response)
 
     def _query_api(self, params):
         """
