@@ -1,0 +1,18 @@
+site_name: PyBomb
+site_url: https://github.com/steveYeah/PyBomb
+site_description: PyBomb - Giant Bomb API clients
+site_author: Steve Hutchins.
+repo_url: https://github.com/steveYeah/PyBomb
+
+theme: readthedocs
+
+markdown_extensions:
+ - toc:
+    anchorlink: True
+    permalink: False
+
+pages:
+  - Home: 'index.md'
+  - Client usage:
+    - Basic Client Usage: 'examples/basic.md'
+    - Games Client Usage: 'examples/games.md'
