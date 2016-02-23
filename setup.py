@@ -19,7 +19,7 @@ except ImportError:
 config = {
     'name': 'pybomb',
     'description': 'Client for the Giant Bomb API',
-    'version': '0.1.4',
+    'version': '0.1.5',
     'long_description': long_description,
     'license': "MIT",
     'author': 'Steve Hutchins',
@@ -29,7 +29,6 @@ config = {
     'keywords': ['giant', 'bomb', 'game', 'api', 'client'],
     'packages': ['pybomb', 'pybomb.clients'],
     'install_requires': [
-        'nose',
         'requests',
     ]
 }
