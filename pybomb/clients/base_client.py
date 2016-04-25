@@ -3,6 +3,7 @@ Base client to extend to create clients for endpoints of the GiantBomb API
 """
 from collections import namedtuple
 
+import pkg_resources
 import requests
 
 import pybomb.exceptions
@@ -16,7 +17,6 @@ class BaseClient(object):
     """
     Base class for API resource clients
     """
-
     URI_BASE = 'http://www.giantbomb.com/api/'
     RESPONSE_FORMAT_JSON = 'json'
     RESPONSE_FORMAT_XML = 'xml'
@@ -35,6 +35,9 @@ class BaseClient(object):
         """
         self._api_key = api_key
         self._default_format = default_format
+        self._headers = {'User-Agent': 'Pybomb {0}'.format(
+            pkg_resources.require("pybomb")[0].version
+        )}
 
     @property
     def api_key(self):
@@ -126,7 +129,11 @@ class BaseClient(object):
         :param params: dict
         :return: requests.models.Response
         """
-        return requests.get(self.URI_BASE + self.RESOURCE_NAME, params=params)
+        return requests.get(
+            self.URI_BASE + self.RESOURCE_NAME,
+            params=params,
+            headers=self._headers
+        )
 
     def _validate_response(self, response):
         """
