@@ -35,7 +35,7 @@ class BaseClient(object):
         """
         self._api_key = api_key
         self._default_format = default_format
-        self._headers = {'User-Agent': 'Pybomb {}'.format(
+        self._headers = {'User-Agent': 'Pybomb {0}'.format(
             pkg_resources.require("pybomb")[0].version
         )}
 
