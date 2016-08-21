@@ -1,7 +1,6 @@
 PyBomb
 ==============
 [![PyPi version](https://img.shields.io/pypi/v/pybomb.svg?)](http://badge.fury.io/py/pybomb)
-[![PyPi downloads](https://img.shields.io/pypi/dm/pybomb.svg?)](https://pypi.python.org/pypi/pybomb)
 [![PyPi status](https://img.shields.io/travis/steveYeah/PyBomb.svg?)](https://travis-ci.org/steveYeah/PyBomb)
 
 Simple client for the Giant Bomb API.
