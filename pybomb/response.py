@@ -4,7 +4,11 @@ The response types and factories for PyBomb
 from collections import namedtuple
 
 
-class Response(namedtuple('Response', ('uri', 'num_page_results', 'num_total_results', 'results'))):
+class Response(
+    namedtuple(
+        'Response', ('uri', 'num_page_results', 'num_total_results', 'results')
+    )
+):
     """
     An API response
     """
