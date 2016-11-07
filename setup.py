@@ -7,12 +7,10 @@ download_url = (
     'https://github.com/steveYeah/PyBomb/archive/v{0}.tar.gz'.format(version)
 )
 
-
 here = os.path.abspath(os.path.dirname(__file__))
 
 with open(os.path.join(here, 'README.rst'), 'r', 'utf-8') as handle:
     readme = handle.read()
-
 
 setup(
     name='pybomb',
