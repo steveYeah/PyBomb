@@ -16,7 +16,7 @@ setup(
     name='pybomb',
     description='Clients for the Giant Bomb API',
     packages=find_packages(exclude=['test', 'test.*']),
-    version='{0}'.format(version),
+    version=version,
     long_description=readme,
     license="MIT",
     author='Steve Hutchins',
