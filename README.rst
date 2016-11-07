@@ -1,8 +1,8 @@
-PyBomb
-==============
 .. image:: https://img.shields.io/travis/steveYeah/PyBomb.svg?branch=master
    :target: https://travis-ci.org/steveYeah/PyBomb
 
+PyBomb
+==============
 
 .. pull-quote::
   Simple clients for the Giant Bomb API.
@@ -11,6 +11,7 @@ PyBomb
 This will go into version 1.0 when all resources are supported.
 
 **Currently Supported Resources**:
+
 * games
 
 Install
