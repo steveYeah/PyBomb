@@ -1,4 +1,3 @@
-from nose.tools import *
 from pybomb import response
 
 

@@ -32,10 +32,13 @@ class GamesClient(BaseClient):
         'site_detail_url': ResponseParam(False, False),
     }
 
-    def search(self, filter_by, return_fields=None, sort_by=None, desc=True, limit=None,
-               offset=None):
+    def search(
+        self, filter_by, return_fields=None, sort_by=None, desc=True,
+        limit=None, offset=None
+    ):
         """
-        Full search of games resource, supporting all search fields available in API
+        Full search of games resource, supporting all search fields
+        available in API
         http://www.giantbomb.com/api/documentation#toc-0-15
 
         :param filter_by: dict
