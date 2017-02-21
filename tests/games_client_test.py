@@ -1,241 +1,90 @@
-from nose.tools import *
-from nose.plugins.attrib import attr
-import pybomb
-from pybomb.response import Response
+import pytest
+from mock import Mock, patch
+
 from pybomb.clients.games_client import GamesClient
 
 
-def setup():
-    global games_client, bad_response_client, bad_request_client, return_fields, sort_by, filter_by, limit, offset
-
-    class MockResponse(object):
-        def __init__(self):
-            self.url = ''
-            self.num_total_results = 1
-            self.num_page_results = 1
-            self.results = ['result']
-            self.status_code = GamesClient.RESPONSE_STATUS_OK
-
-        def json(self):
-            return {
-                'number_of_total_results': self.num_total_results,
-                'number_of_page_results': self.num_page_results,
-                'results': self.results,
-                'status_code': self.status_code,
-            }
-
-        def raise_for_status(self):
-            return None
-
-    def _query_api(params, direct=False):
-        """
-        :param params: dict
-        :return: requests.models.Response
-        """
-        return MockResponse()
-
+@pytest.fixture
+def games_client():
     games_client = GamesClient('mock_api_key')
-    games_client._query_api = _query_api
 
-    class MockBadResponse(object):
-        def __init__(self):
-            self.status_code = 100
+    return games_client
 
-        def json(self):
-            return {
-                'status_code': self.status_code,
-                'error': 'Invalid API Key'
-            }
+# need to mock out requests.get
+# response.json()
+# response_json = response_data.json()
+#   return cls(
+#       response_data.url,
+#       response_json['number_of_page_results'],
+#       response_json['number_of_total_results'],
+#       response_json['results']
+#   )
 
-        def raise_for_status(self):
-            return None
 
-    def _query_api_bad(params, direct=False):
-        """
-        :param params: dict
-        :return: requests.models.Response
-        """
-        return MockBadResponse()
-
-    bad_response_client = GamesClient('mock key')
-    bad_response_client._query_api = _query_api_bad
-
-    bad_request_client = GamesClient('mock key')
-    bad_request_client.URI_BASE = 'http://httpbin.org/status/404'
-
-    return_fields = (
-        'api_detail_url',
-        'date_added',
-        'date_last_updated',
-        'deck',
-        'description',
-        'expected_release_month',
-        'expected_release_quarter',
-        'expected_release_year',
-        'id',
-        'image',
-        'name',
-        'number_of_user_reviews',
-        'original_game_rating',
-        'original_release_date',
-        'platforms',
-        'site_detail_url'
-    )
-
-    sort_by = 'date_added'
-
-    filter_by = {
-        'aliases': None,
-        'date_added': None,
-        'date_last_updated': None,
-        'expected_release_month': None,
-        'expected_release_quarter': None,
-        'expected_release_year': None,
-        'id': None,
-        'name': None,
-        'number_of_user_reviews': None,
-        'original_release_date': None,
-        'platforms': None
+@pytest.fixture
+@patch('pybomb.clients.base_client.requests')
+def fake_request(mock_requests):
+    mock_json_data = {
+        'number_of_page_results': 1,
+        'number_of_total_results': 1,
+        'results': []
     }
 
-    limit = 10
-    offset = 100
+    get_mock = Mock()
+    get_mock.json.return_value = mock_json_data
+    mock_requests.get.return_value = get_mock
+
+    return mock_requests
 
 
-def test_full_search_should_return_response():
-    """
-    When the search function is used correctly then it should return a response
-    """
-    response = games_client.search(
-        filter_by, return_fields, sort_by, False, limit, offset
-    )
-    assert isinstance(response, Response)
+class TestFullSearch:
+
+    def test_return_valid_response(self, fake_request, games_client):
+        games_client.search(
+            filter_by=filter_by,
+            return_fields=return_fields,
+            sort_by=sort_by,
+            desc=True,
+            limit=limit,
+            offset=offset
+        )
+        assert False
+
+    def test_unknown_filter():
+        assert False
+
+    def test_invalid_filter():
+        assert False
+
+    def test_unknown_sort():
+        assert False
+
+    def test_invalid_sort():
+        assert False
+
+    def test_invalid_return_field():
+        assert False
+
+    def test_invalid_limit():
+        assert False
+
+    def test_invalid_offset():
+        assert False
+
+    def test_search_bad_request():
+        assert False
+
+    def test_search_bad_response():
+        assert False
 
 
-@raises(pybomb.exceptions.InvalidFilterFieldException)
-def test_full_search_filter_by_field():
-    """
-    pybomb.exceptions.InvalidFilterFieldException is thrown when trying
-    to use an invalid filter field
-    """
-    invalid_filter_by = {'Bob': False}
-    games_client.search(
-        invalid_filter_by, return_fields, sort_by, True, limit, offset
-    )
+class TestQuickSearch:
 
+    def test_quick_search_should_return_response():
+        assert False
 
-@raises(pybomb.exceptions.InvalidFilterFieldException)
-def test_full_search_filter_by_field_not_a_valid_filter():
-    """
-    pybomb.exceptions.InvalidFilterFieldException is thrown when trying
-    to use a valid field that cannot be used as a filter
-    """
-    invalid_filter_by = {'api_detail_url': False}
-    games_client.search(
-        invalid_filter_by, return_fields, sort_by, True, limit, offset
-    )
+    def test_quick_search_bad_request():
+        assert False
 
-
-@raises(pybomb.exceptions.InvalidReturnFieldException)
-def test_full_search_invalid_return_field():
-    """
-    pybomb.exceptions.InvalidReturnFieldException is thrown when trying
-    to use an invalid return field
-    """
-    invalid_return_fields = {'Bob': False}
-    games_client.search(
-        filter_by, invalid_return_fields, sort_by, True, limit, offset
-    )
-
-
-@raises(pybomb.exceptions.InvalidSortFieldException)
-def test_full_search_invalid_sort_by_field():
-    """
-    pybomb.exceptions.InvalidSortFieldException is thrown when trying to
-    use an invalid sort field
-    """
-    invalid_sort_by = 'Bob'
-    games_client.search(
-        filter_by, return_fields, invalid_sort_by, True, limit, offset
-    )
-
-
-@raises(pybomb.exceptions.InvalidSortFieldException)
-def test_full_search_invalid_sort_by_field_not_a_valid_sort():
-    """
-    pybomb.exceptions.InvalidSortFieldException is thrown when trying to
-    use a valid field that cannot be used for sorting
-    """
-    invalid_sort_by = 'aliases'
-    games_client.search(
-        filter_by, return_fields, invalid_sort_by, True, limit, offset
-    )
-
-
-@raises(ValueError)
-def test_invalid_limit():
-    """
-    ValueError is thrown when trying to use a data type that cannot be cast to
-    an int as the limit field
-    """
-    games_client.search(filter_by, return_fields, sort_by, True, 'bob', offset)
-
-
-@raises(ValueError)
-def test_invalid_offset():
-    """
-    ValueError is thrown when trying to use a data type that cannot be cast to
-    an int as the offset field
-    """
-    games_client.search(filter_by, return_fields, sort_by, True, limit, 'bob')
-
-
-def test_quick_search_should_return_response():
-    """
-    When the quick search function is used correctly then it should
-    return a response
-    """
-    response = games_client.quick_search('deus ex', pybomb.PS3)
-    assert isinstance(response, Response)
-
-
-@attr('web')
-@raises(pybomb.exceptions.BadRequestException)
-def test_search_bad_request():
-    """
-    pybomb.exceptions.BadRequestException is thrown if the search request
-    doesn't result in 200 response
-    """
-    bad_request_client.search(
-        filter_by, return_fields, sort_by, False, limit, offset
-    )
-
-
-@attr('web')
-@raises(pybomb.exceptions.BadRequestException)
-def test_quick_search_bad_request():
-    """
-    pybomb.exceptions.BadRequestException is thrown if the quick search request
-    doesn't result in 200 response
-    """
-    bad_request_client.quick_search('deus ex', pybomb.PS3)
-
-
-@raises(pybomb.exceptions.InvalidResponseException)
-def test_search_bad_response():
-    """
-    pybomb.exceptions.InvalidResponseException is thrown is the search response
-    code is not 1
-    """
-    bad_response_client.search(
-        filter_by, return_fields, sort_by, False, limit, offset
-    )
-
-
-@raises(pybomb.exceptions.InvalidResponseException)
-def test_quick_search_bad_response():
-    """
-    pybomb.exceptions.InvalidResponseException is thrown is the quick search
-    response code is not 1
-    """
-    bad_response_client.quick_search('deus ex', pybomb.PS3)
+    def test_quick_search_bad_response():
+        assert False
