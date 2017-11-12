@@ -28,7 +28,7 @@ def setup():
 
     mock_bad_response = Mock()
     mock_bad_response.json.return_value = {
-        'status_code':100,
+        'status_code': 100,
         'error': 'Invalid API Key',
     }
     mock_bad_response.raise_for_status.return_value = None
@@ -52,7 +52,7 @@ def test_fetch_invalid_return_field():
 @attr('web')
 @raises(pybomb.exceptions.BadRequestException)
 def test_fetch_bad_request():
-   bad_request_client.fetch(1)
+    bad_request_client.fetch(1)
 
 
 @raises(pybomb.exceptions.InvalidResponseException)
