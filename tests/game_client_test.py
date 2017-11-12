@@ -45,7 +45,7 @@ def test_fetch_returns_response():
 
 @raises(pybomb.exceptions.InvalidReturnFieldException)
 def test_fetch_invalid_return_field():
-    invalid_return_field = {'Bob', False}
+    invalid_return_field = {'Bob': False}
     game_client.fetch(1, invalid_return_field)
 
 
