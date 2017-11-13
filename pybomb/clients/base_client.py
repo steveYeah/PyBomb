@@ -109,7 +109,7 @@ class BaseClient(object):
              key, value in filter_by.items() if value is not None]
         )
 
-    def _query(self, params):
+    def _query(self, params, direct=False):
         """
         :param params: dict
         :return: pybomb.clients.response
@@ -119,18 +119,26 @@ class BaseClient(object):
         if 'format' not in params:
             params['format'] = self._default_format
 
-        response = self._query_api(params)
+        response = self._query_api(params, direct)
         self._validate_response(response)
 
         return pybomb.response.Response.from_response_data(response)
 
-    def _query_api(self, params):
+    def _query_api(self, params, direct=False):
         """
         :param params: dict
         :return: requests.models.Response
         """
+        if not direct:
+            return requests.get(
+                self.URI_BASE + self.RESOURCE_NAME,
+                params=params,
+                headers=self._headers
+            )
+
+        id = params.pop('id')
         return requests.get(
-            self.URI_BASE + self.RESOURCE_NAME,
+            self.URI_BASE + self.RESOURCE_NAME + '/{0}'.format(id),
             params=params,
             headers=self._headers
         )

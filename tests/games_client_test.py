@@ -1,13 +1,14 @@
 from nose.tools import *
 from nose.plugins.attrib import attr
+
 import pybomb
 from pybomb.response import Response
 from pybomb.clients.games_client import GamesClient
 
 
 def setup():
-    global games_client, bad_response_client, bad_request_client, return_fields, sort_by, \
-        filter_by, limit, offset
+    global games_client, bad_response_client, bad_request_client
+    global return_fields, sort_by, filter_by, limit, offset
 
     class MockResponse(object):
         def __init__(self):
@@ -28,7 +29,7 @@ def setup():
         def raise_for_status(self):
             return None
 
-    def _query_api(params):
+    def _query_api(*args, **kwargs):
         """
         :param params: dict
         :return: requests.models.Response
@@ -51,7 +52,7 @@ def setup():
         def raise_for_status(self):
             return None
 
-    def _query_api_bad(params):
+    def _query_api_bad(*args, **kwargs):
         """
         :param params: dict
         :return: requests.models.Response
@@ -107,64 +108,77 @@ def test_full_search_should_return_response():
     """
     When the search function is used correctly then it should return a response
     """
-    response = games_client.search(filter_by, return_fields, sort_by, False, limit, offset)
+    response = games_client.search(
+        filter_by, return_fields, sort_by, False, limit, offset
+    )
     assert isinstance(response, Response)
 
 
 @raises(pybomb.exceptions.InvalidFilterFieldException)
 def test_full_search_filter_by_field():
     """
-    pybomb.exceptions.InvalidFilterFieldException is thrown when trying to use an invalid filter
-    field
+    pybomb.exceptions.InvalidFilterFieldException is thrown when trying to
+    use an invalid filter field
     """
     invalid_filter_by = {'Bob': False}
-    games_client.search(invalid_filter_by, return_fields, sort_by, True, limit, offset)
+    games_client.search(
+        invalid_filter_by, return_fields, sort_by, True, limit, offset
+    )
 
 
 @raises(pybomb.exceptions.InvalidFilterFieldException)
 def test_full_search_filter_by_field_not_a_valid_filter():
     """
-    pybomb.exceptions.InvalidFilterFieldException is thrown when trying to use a valid field
-    that cannot be used as a filter
+    pybomb.exceptions.InvalidFilterFieldException is thrown when trying
+    to use a valid field that cannot be used as a filter
     """
     invalid_filter_by = {'api_detail_url': False}
-    games_client.search(invalid_filter_by, return_fields, sort_by, True, limit, offset)
+    games_client.search(
+        invalid_filter_by, return_fields, sort_by, True, limit, offset
+    )
 
 
 @raises(pybomb.exceptions.InvalidReturnFieldException)
 def test_full_search_invalid_return_field():
     """
-    pybomb.exceptions.InvalidReturnFieldException is thrown when trying to use an invalid return
-    field
+    pybomb.exceptions.InvalidReturnFieldException is thrown when trying
+    to use an invalid return field
     """
     invalid_return_fields = {'Bob': False}
-    games_client.search(filter_by, invalid_return_fields, sort_by, True, limit, offset)
+    games_client.search(
+        filter_by, invalid_return_fields, sort_by, True, limit, offset
+    )
 
 
 @raises(pybomb.exceptions.InvalidSortFieldException)
 def test_full_search_invalid_sort_by_field():
     """
-    pybomb.exceptions.InvalidSortFieldException is thrown when trying to use an invalid sort field
+    pybomb.exceptions.InvalidSortFieldException is thrown when trying
+    to use an invalid sort field
     """
     invalid_sort_by = 'Bob'
-    games_client.search(filter_by, return_fields, invalid_sort_by, True, limit, offset)
+    games_client.search(
+        filter_by, return_fields, invalid_sort_by, True, limit, offset
+    )
 
 
 @raises(pybomb.exceptions.InvalidSortFieldException)
 def test_full_search_invalid_sort_by_field_not_a_valid_sort():
     """
-    pybomb.exceptions.InvalidSortFieldException is thrown when trying to use a valid field that
-    cannot be used for sorting
+    pybomb.exceptions.InvalidSortFieldException is thrown when trying
+    to use a valid field that cannot be used for sorting
     """
     invalid_sort_by = 'aliases'
-    games_client.search(filter_by, return_fields, invalid_sort_by, True, limit, offset)
+    games_client.search(
+        filter_by, return_fields, invalid_sort_by, True, limit, offset
+    )
 
 
 @raises(ValueError)
 def test_invalid_limit():
     """
-    ValueError is thrown when trying to use a data type that cannot be cast to an int as the limit
-    field
+    ValueError is thrown when trying to use a data type that cannot be
+    cast to an int as the limit field
     """
     games_client.search(filter_by, return_fields, sort_by, True, 'bob', offset)
 
@@ -172,15 +186,16 @@ def test_invalid_limit():
 @raises(ValueError)
 def test_invalid_offset():
     """
-    ValueError is thrown when trying to use a data type that cannot be cast to an int as the offset
-    field
+    ValueError is thrown when trying to use a data type that cannot be cast
+    to an int as the offset field
     """
     games_client.search(filter_by, return_fields, sort_by, True, limit, 'bob')
 
 
 def test_quick_search_should_return_response():
     """
-    When the quick search function is used correctly then it should return a response
+    When the quick search function is used correctly then it should
+    return a response
     """
     response = games_client.quick_search('deus ex', pybomb.PS3)
     assert isinstance(response, Response)
@@ -190,18 +205,20 @@ def test_quick_search_should_return_response():
 @raises(pybomb.exceptions.BadRequestException)
 def test_search_bad_request():
     """
-    pybomb.exceptions.BadRequestException is thrown if the search request doesn't result in 200
-    response
+    pybomb.exceptions.BadRequestException is thrown if the search request
+    doesn't result in 200 response
     """
-    bad_request_client.search(filter_by, return_fields, sort_by, False, limit, offset)
+    bad_request_client.search(
+        filter_by, return_fields, sort_by, False, limit, offset
+    )
 
 
 @attr('web')
 @raises(pybomb.exceptions.BadRequestException)
 def test_quick_search_bad_request():
     """
-    pybomb.exceptions.BadRequestException is thrown if the quick search request doesn't result in
-    200 response
+    pybomb.exceptions.BadRequestException is thrown if the quick search
+    request doesn't result in 200 response
     """
     bad_request_client.quick_search('deus ex', pybomb.PS3)
 
@@ -209,14 +226,18 @@ def test_quick_search_bad_request():
 @raises(pybomb.exceptions.InvalidResponseException)
 def test_search_bad_response():
     """
-    pybomb.exceptions.InvalidResponseException is thrown is the search response code is not 1
+    pybomb.exceptions.InvalidResponseException is thrown is the search
+    response code is not 1
     """
-    bad_response_client.search(filter_by, return_fields, sort_by, False, limit, offset)
+    bad_response_client.search(
+        filter_by, return_fields, sort_by, False, limit, offset
+    )
 
 
 @raises(pybomb.exceptions.InvalidResponseException)
 def test_quick_search_bad_response():
     """
-    pybomb.exceptions.InvalidResponseException is thrown is the quick search response code is not 1
+    pybomb.exceptions.InvalidResponseException is thrown is the quick search
+    response code is not 1
     """
     bad_response_client.quick_search('deus ex', pybomb.PS3)
