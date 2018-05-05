@@ -4,7 +4,9 @@ Base client to extend to create clients for endpoints of the GiantBomb API
 from collections import namedtuple
 
 import pkg_resources
-import requests
+from requests import get
+from requests.exceptions import HTTPError
+
 
 import pybomb.exceptions
 import pybomb.response
@@ -130,14 +132,14 @@ class BaseClient(object):
         :return: requests.models.Response
         """
         if not direct:
-            return requests.get(
+            return get(
                 self.URI_BASE + self.RESOURCE_NAME,
                 params=params,
                 headers=self._headers
             )
 
         id = params.pop('id')
-        return requests.get(
+        return get(
             self.URI_BASE + self.RESOURCE_NAME + '/{0}'.format(id),
             params=params,
             headers=self._headers
@@ -151,7 +153,7 @@ class BaseClient(object):
         """
         try:
             response.raise_for_status()
-        except requests.exceptions.HTTPError as http_error:
+        except HTTPError as http_error:
             raise pybomb.exceptions.BadRequestException(str(http_error))
 
         response_data = response.json()
