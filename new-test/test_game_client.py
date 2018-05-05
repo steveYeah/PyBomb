@@ -5,7 +5,9 @@ from requests.exceptions import HTTPError
 
 
 from pybomb.clients.game_client import GameClient
-from pybomb.exceptions import InvalidReturnFieldException, BadRequestException
+from pybomb.exceptions import (
+    InvalidReturnFieldException, BadRequestException, InvalidResponseException
+)
 from pybomb.response import Response
 
 
@@ -76,8 +78,17 @@ class TestGameClient:
         with pytest.raises(InvalidReturnFieldException):
             res = game_client.fetch(1, ('bad', 'params'))
 
-    def test_invalid_response(self, game_client, mock_response):
+    def test_bad_giantbomb_request(self, game_client, mock_response):
         mock_response.raise_for_status.side_effect = HTTPError('Test error')
 
         with pytest.raises(BadRequestException):
+            res = game_client.fetch(1)
+
+    def test_bad_giantbomb_response(self, game_client, mock_response):
+        mock_response_json = mock_response.json()
+        mock_response_json['status_code'] = 2
+        mock_response_json['error'] = 'Badness'
+        mock_response.json.return_value = mock_response_json
+
+        with pytest.raises(InvalidResponseException):
             res = game_client.fetch(1)

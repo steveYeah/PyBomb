@@ -8,8 +8,11 @@ from requests import get
 from requests.exceptions import HTTPError
 
 
-import pybomb.exceptions
-import pybomb.response
+from pybomb.exceptions import (
+    InvalidReturnFieldException, BadRequestException,
+    InvalidFilterFieldException, InvalidResponseException
+)
+from pybomb.response import Response
 
 
 ResponseParam = namedtuple('ResponseParam', ('is_filter', 'is_sort'))
@@ -73,7 +76,7 @@ class BaseClient(object):
         """
         for return_field in return_fields:
             if return_field not in self.RESPONSE_FIELD_MAP:
-                raise pybomb.exceptions.InvalidReturnFieldException(
+                raise InvalidReturnFieldException(
                     '"{0}" is an invalid return field'.format(return_field)
                 )
 
@@ -84,7 +87,7 @@ class BaseClient(object):
         """
         if (sort_by not in self.RESPONSE_FIELD_MAP or
                 not self.RESPONSE_FIELD_MAP[sort_by].is_sort):
-            raise pybomb.exceptions.InvalidSortFieldException(
+            raise InvalidSortFieldException(
                 '"{0}" is an invalid sort field'.format(sort_by)
             )
 
@@ -96,7 +99,7 @@ class BaseClient(object):
         for filter_field in filter_by:
             if (filter_field not in self.RESPONSE_FIELD_MAP or
                     not self.RESPONSE_FIELD_MAP[filter_field].is_filter):
-                raise pybomb.exceptions.InvalidFilterFieldException(
+                raise InvalidFilterFieldException(
                     '"{0}" is an invalid filter field'.format(filter_field)
                 )
 
@@ -124,7 +127,7 @@ class BaseClient(object):
         response = self._query_api(params, direct)
         self._validate_response(response)
 
-        return pybomb.response.Response.from_response_data(response)
+        return Response.from_response_data(response)
 
     def _query_api(self, params, direct=False):
         """
@@ -154,11 +157,11 @@ class BaseClient(object):
         try:
             response.raise_for_status()
         except HTTPError as http_error:
-            raise pybomb.exceptions.BadRequestException(str(http_error))
+            raise BadRequestException(str(http_error))
 
         response_data = response.json()
         if response_data['status_code'] != self.RESPONSE_STATUS_OK:
-            raise pybomb.exceptions.InvalidResponseException(
+            raise InvalidResponseException(
                 'Response code {0}: {1}'.format(
                     response_data['status_code'],
                     response_data['error']
