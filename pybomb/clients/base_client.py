@@ -1,9 +1,9 @@
 """
 Base client to extend to create clients for endpoints of the GiantBomb API
 """
+import pkg_resources
 from collections import namedtuple
 
-import pkg_resources
 from requests import get
 from requests.exceptions import HTTPError
 

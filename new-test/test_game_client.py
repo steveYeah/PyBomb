@@ -1,14 +1,18 @@
+import pkg_resources
+
 import pytest
 from mock import patch, MagicMock
 from requests.models import Response as RequestsResponse
 from requests.exceptions import HTTPError
-
 
 from pybomb.clients.game_client import GameClient
 from pybomb.exceptions import (
     InvalidReturnFieldException, BadRequestException, InvalidResponseException
 )
 from pybomb.response import Response
+
+
+version = pkg_resources.require("pybomb")[0].version
 
 
 class TestGameClient:
@@ -52,18 +56,16 @@ class TestGameClient:
             mock_response_json['number_of_total_results']
         )
 
-        # TODO - use the version number param
         mock_requests_get.assert_called_once_with(
             'http://www.giantbomb.com/api/game/1',
             params={'api_key': 'fake_key', 'format': 'json'},
-            headers={'User-Agent': 'Pybomb 0.1.6'}
+            headers={'User-Agent': 'Pybomb {}'.format(version)}
         )
 
     def test_can_specify_return_fields(self, game_client, mock_requests_get):
         res = game_client.fetch(1, ('id', 'name'))
         assert isinstance(res, Response)
 
-        # TODO - use the version number param
         mock_requests_get.assert_called_once_with(
             'http://www.giantbomb.com/api/game/1',
             params={
@@ -71,7 +73,7 @@ class TestGameClient:
                 'api_key': 'fake_key',
                 'format': 'json'
             },
-            headers={'User-Agent': 'Pybomb 0.1.6'}
+            headers={'User-Agent': 'Pybomb {}'.format(version)}
         )
 
     def test_invalid_return_fields(self, game_client, mock_response):
