@@ -7,7 +7,9 @@ from requests.exceptions import HTTPError
 
 from pybomb.clients.game_client import GameClient
 from pybomb.exceptions import (
-    InvalidReturnFieldException, BadRequestException, InvalidResponseException
+    InvalidReturnFieldException,
+    BadRequestException,
+    InvalidResponseException,
 )
 from pybomb.response import Response
 
@@ -42,7 +44,9 @@ class TestGameClient:
 
         return game_client
 
-    def test_can_fetch_game(self, game_client, mock_response, mock_requests_get):
+    def test_can_fetch_game(
+        self, game_client, mock_response, mock_requests_get
+    ):
         res = game_client.fetch(1)
 
         assert isinstance(res, Response)
@@ -79,7 +83,7 @@ class TestGameClient:
             headers={'User-Agent': 'Pybomb {}'.format(version)}
         )
 
-    def test_invalid_return_fields(self, game_client, mock_response):
+    def test_invalid_return_fields(self, game_client):
         with pytest.raises(InvalidReturnFieldException):
             res = game_client.fetch(1, ('bad', 'params'))
 
