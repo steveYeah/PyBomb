@@ -5,7 +5,6 @@ from mock import patch, MagicMock
 from requests.models import Response as RequestsResponse
 from requests.exceptions import HTTPError
 
-
 from pybomb.clients.games_client import GamesClient
 from pybomb.exceptions import (
     InvalidReturnFieldException,
