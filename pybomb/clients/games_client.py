@@ -106,7 +106,7 @@ class GamesClient(BaseClient):
             else:
                 direction = self.SORT_ORDER_ASCENDING
 
-            search_params['sort'] = '{0}:{1}'.format(sort_by, direction),
+            search_params['sort'] = '{0}:{1}'.format(sort_by, direction)
 
         response = self._query(search_params)
 
