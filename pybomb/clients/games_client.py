@@ -99,6 +99,8 @@ class GamesClient(BaseClient):
         search_params = {'filter': query_filter}
 
         if sort_by is not None:
+            self._validate_sort_field(sort_by)
+
             if desc:
                 direction = self.SORT_ORDER_DESCENDING
             else:

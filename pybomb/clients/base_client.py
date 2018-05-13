@@ -10,7 +10,8 @@ from requests.exceptions import HTTPError
 
 from pybomb.exceptions import (
     InvalidReturnFieldException, BadRequestException,
-    InvalidFilterFieldException, InvalidResponseException
+    InvalidFilterFieldException, InvalidResponseException,
+    InvalidSortFieldException
 )
 from pybomb.response import Response
 

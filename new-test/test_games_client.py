@@ -8,7 +8,10 @@ from requests.exceptions import HTTPError
 
 from pybomb.clients.games_client import GamesClient
 from pybomb.exceptions import (
-    InvalidReturnFieldException, BadRequestException, InvalidResponseException
+    InvalidReturnFieldException,
+    BadRequestException,
+    InvalidResponseException,
+    InvalidSortFieldException,
 )
 from pybomb.response import Response
 
@@ -51,7 +54,7 @@ class TestGamesClient:
             assert res.uri == mock_response.url
 
             mock_response_json = mock_response.json()
-            assert res.results == res.results
+            assert res.results == mock_response_json['results']
 
             assert res.num_page_results == (
                 mock_response_json['number_of_page_results']
@@ -71,20 +74,38 @@ class TestGamesClient:
                 headers={'User-Agent': 'Pybomb {}'.format(version)}
             )
 
-        def test_sort(self):
-            assert False
+        @pytest.mark.parametrize(
+            'sort_dec, sort_direction', [(True, 'desc'), (False, 'asc')]
+        )
+        def test_sort(
+            self, sort_dec, sort_direction, games_client, mock_response,
+            mock_requests_get
+        ):
+            res = games_client.quick_search(
+                'game name', sort_by='date_added', desc=sort_dec
+            )
+            assert isinstance(res, Response)
 
-        def test_invaild_sort(self):
-            assert False
+            mock_requests_get.assert_called_once_with(
+                'http://www.giantbomb.com/api/games',
+                params={
+                    'filter': 'name:game name',
+                    'sort': (f'date_added:{sort_direction}',),
+                    'api_key': 'fake_key',
+                    'format': 'json'
+                },
+                headers={'User-Agent': 'Pybomb {}'.format(version)}
+            )
 
-        def test_desc(self):
-            assert False
+        def test_invaild_sort(self, games_client):
+            with pytest.raises(InvalidSortFieldException):
+                res = games_client.quick_search('game name', sort_by='aliases')
 
         def test_bad_giantbomb_request(self, games_client, mock_response):
             mock_response.raise_for_status.side_effect = HTTPError('Test error')
 
             with pytest.raises(BadRequestException):
-                res = games_client.fetch(1)
+                res = games_client.quick_search('bad search')
 
         def test_bad_giantbomb_response(self, games_client, mock_response):
             mock_response_json = mock_response.json()
@@ -93,7 +114,7 @@ class TestGamesClient:
             mock_response.json.return_value = mock_response_json
 
             with pytest.raises(InvalidResponseException):
-                res = games_client.fetch(1)
+                res = games_client.quick_search('bad search')
 
     class TestSearch:
         def test_filter_search(self):
