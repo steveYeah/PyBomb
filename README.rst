@@ -77,3 +77,5 @@ Examples
 
 **More examples for other clients can be found in the documentation**
 https://pybomb.readthedocs.org
+
+To see a working example of Pybomb, take a look at https://github.com/steveYeah/gamesearch
