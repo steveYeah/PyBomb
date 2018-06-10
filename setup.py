@@ -2,7 +2,7 @@ from codecs import open
 import os
 from setuptools import setup, find_packages
 
-version = '0.1.6'
+version = '0.2.0'
 download_url = (
     'https://github.com/steveYeah/PyBomb/archive/v{0}.tar.gz'.format(version)
 )
