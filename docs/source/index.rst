@@ -34,22 +34,23 @@ Here's an example of the Games endpoint::
 
 
 
-
-User Guide
-----------
-He we show some examples of how to use each of the PyBomb clients.
+Usage
+-----
+Examples of how to use the PyBomb clients, and response object.
 
 .. toctree::
    :maxdepth: 1
 
-   clients
-   response
+   usage/clients
+   usage/response
 
-API Guide
----------
+API Documentation
+-----------------
 All the API documentation.
 
 .. toctree::
    :maxdepth: 2
 
-   pybomb
+   api/clients
+   api/response
+   api/exceptions

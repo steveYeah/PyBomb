@@ -1,7 +1,7 @@
 Games client
 ============
 The GamesClient is the client used to access the `games
-endpoint <http://www.giantbomb.com/api/documentation#toc-0-15>`_ of the Giant Bomb API.
+endpoint <http://www.giantbomb.com/api/documentation#toc-0-17>`_ of the Giant Bomb API.
 
 GamesClient has two external methods. `search` offers a full API to the end point, allowing you to specify all
 fields, filters and return parameters. There is also a `quick_search` that allows you to search just using a

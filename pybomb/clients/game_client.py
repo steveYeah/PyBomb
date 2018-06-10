@@ -1,8 +1,14 @@
+"""
+Client for the Game resource of GiantBomb
+https://www.giantbomb.com/api/documentation#toc-0-16
+"""
 from pybomb.clients.base_client import BaseClient, ResponseParam
 
 
 class GameClient(BaseClient):
-
+    """
+    Client for the 'game' API resource
+    """
     RESOURCE_NAME = 'game'
 
     RESPONSE_FIELD_MAP = {
@@ -48,7 +54,14 @@ class GameClient(BaseClient):
     }
 
     def fetch(self, id_, return_fields=None):
+        """
+        Wrapper for fetching details of game by ID
 
+        :param id_: int
+        :param return_fields: tuple
+
+        :return: pybomb.clients.Response
+        """
         game_params = {'id': id_}
 
         if return_fields is not None:
