@@ -13,6 +13,7 @@ This will go into version 1.0 when all resources are supported.
 **Currently Supported Resources**:
 
 * games
+* game
 
 Install
 -------
@@ -73,3 +74,6 @@ Examples
   print response.uri
   print response.num_page_results
   print response.num_total_results
+
+**More examples for other clients can be found in the documentation**
+https://pybomb.readthedocs.org
