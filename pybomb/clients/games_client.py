@@ -1,6 +1,6 @@
 """
 Client for the Games resource of GiantBomb
-http://www.giantbomb.com/api/documentation#toc-0-15
+https://www.giantbomb.com/api/documentation#toc-0-17
 """
 from pybomb.clients.base_client import BaseClient, ResponseParam
 
@@ -9,7 +9,6 @@ class GamesClient(BaseClient):
     """
     Client for the 'games' API resource
     """
-
     RESOURCE_NAME = 'games'
 
     RESPONSE_FIELD_MAP = {
@@ -39,7 +38,7 @@ class GamesClient(BaseClient):
         """
         Full search of games resource, supporting all search fields
         available in API
-        http://www.giantbomb.com/api/documentation#toc-0-15
+        http://www.giantbomb.com/api/documentation#toc-0-17
 
         :param filter_by: dict
         :param return_fields: tuple

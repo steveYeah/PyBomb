@@ -1,4 +1,4 @@
-Responses
+Response
 =========
 Responses are wrapped up in the `pybomb.response` object::
 

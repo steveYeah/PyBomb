@@ -32,3 +32,4 @@ Endpoint clients
    :maxdepth: 1
 
    gamesclient
+   gameclient
