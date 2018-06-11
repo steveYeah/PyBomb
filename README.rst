@@ -75,8 +75,11 @@ Examples
   print response.num_page_results
   print response.num_total_results
 
-More examples for other clients can be found in the documentation
-https://pybomb.readthedocs.org
+**More examples**
 
 To see a working example of Pybomb, take a look at the example project GameSearch
 https://github.com/steveYeah/gamesearch
+
+Documentation
+-------------
+The full documentation, including more examples can be found at https://pybomb.readthedocs.org
