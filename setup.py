@@ -32,7 +32,7 @@ setup(
         'client'
     ),
     install_requires=(
-        'requests',
+        'requests>=2.19.0',
     ),
     extras_require={
         'dev': (
