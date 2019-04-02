@@ -5,9 +5,7 @@ from collections import namedtuple
 
 
 class Response(
-    namedtuple(
-        'Response', ('uri', 'num_page_results', 'num_total_results', 'results')
-    )
+    namedtuple("Response", ("uri", "num_page_results", "num_total_results", "results"))
 ):
     """
     An API response
@@ -26,7 +24,7 @@ class Response(
 
         return cls(
             response_data.url,
-            response_json['number_of_page_results'],
-            response_json['number_of_total_results'],
-            response_json['results']
+            response_json["number_of_page_results"],
+            response_json["number_of_total_results"],
+            response_json["results"],
         )

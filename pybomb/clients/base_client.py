@@ -9,30 +9,33 @@ from requests.exceptions import HTTPError
 
 
 from pybomb.exceptions import (
-    InvalidReturnFieldException, BadRequestException,
-    InvalidFilterFieldException, InvalidResponseException,
-    InvalidSortFieldException
+    InvalidReturnFieldException,
+    BadRequestException,
+    InvalidFilterFieldException,
+    InvalidResponseException,
+    InvalidSortFieldException,
 )
 from pybomb.response import Response
 
 
-ResponseParam = namedtuple('ResponseParam', ('is_filter', 'is_sort'))
+ResponseParam = namedtuple("ResponseParam", ("is_filter", "is_sort"))
 
 
 class BaseClient(object):
     """
     Base class for API resource clients
     """
-    URI_BASE = 'http://www.giantbomb.com/api/'
-    RESPONSE_FORMAT_JSON = 'json'
-    RESPONSE_FORMAT_XML = 'xml'
+
+    URI_BASE = "http://www.giantbomb.com/api/"
+    RESPONSE_FORMAT_JSON = "json"
+    RESPONSE_FORMAT_XML = "xml"
     RESPONSE_FIELD_MAP = None
     RESPONSE_STATUS_OK = 1
 
     RESOURCE_NAME = None
 
-    SORT_ORDER_ASCENDING = 'asc'
-    SORT_ORDER_DESCENDING = 'desc'
+    SORT_ORDER_ASCENDING = "asc"
+    SORT_ORDER_DESCENDING = "desc"
 
     def __init__(self, api_key, default_format=RESPONSE_FORMAT_JSON):
         """
@@ -41,9 +44,11 @@ class BaseClient(object):
         """
         self._api_key = api_key
         self._default_format = default_format
-        self._headers = {'User-Agent': 'Pybomb {0}'.format(
-            pkg_resources.require("pybomb")[0].version
-        )}
+        self._headers = {
+            "User-Agent": "Pybomb {0}".format(
+                pkg_resources.require("pybomb")[0].version
+            )
+        }
 
     @property
     def api_key(self):
@@ -86,8 +91,10 @@ class BaseClient(object):
         :param sort_by: string
         :raises: pybomb.exceptions.InvalidSortFieldException
         """
-        if (sort_by not in self.RESPONSE_FIELD_MAP or
-                not self.RESPONSE_FIELD_MAP[sort_by].is_sort):
+        if (
+            sort_by not in self.RESPONSE_FIELD_MAP
+            or not self.RESPONSE_FIELD_MAP[sort_by].is_sort
+        ):
             raise InvalidSortFieldException(
                 '"{0}" is an invalid sort field'.format(sort_by)
             )
@@ -98,8 +105,10 @@ class BaseClient(object):
         :raises: pybomb.exceptions.InvalidFilterFieldException
         """
         for filter_field in filter_by:
-            if (filter_field not in self.RESPONSE_FIELD_MAP or
-                    not self.RESPONSE_FIELD_MAP[filter_field].is_filter):
+            if (
+                filter_field not in self.RESPONSE_FIELD_MAP
+                or not self.RESPONSE_FIELD_MAP[filter_field].is_filter
+            ):
                 raise InvalidFilterFieldException(
                     '"{0}" is an invalid filter field'.format(filter_field)
                 )
@@ -110,9 +119,12 @@ class BaseClient(object):
         :param filter_by:
         :return: dict
         """
-        return ','.join(
-            ['{0}:{1}'.format(key, value) for
-             key, value in filter_by.items() if value is not None]
+        return ",".join(
+            [
+                "{0}:{1}".format(key, value)
+                for key, value in filter_by.items()
+                if value is not None
+            ]
         )
 
     def _query(self, params, direct=False):
@@ -120,10 +132,10 @@ class BaseClient(object):
         :param params: dict
         :return: pybomb.clients.response
         """
-        params['api_key'] = self._api_key
+        params["api_key"] = self._api_key
 
-        if 'format' not in params:
-            params['format'] = self._default_format
+        if "format" not in params:
+            params["format"] = self._default_format
 
         response = self._query_api(params, direct)
         self._validate_response(response)
@@ -137,16 +149,14 @@ class BaseClient(object):
         """
         if not direct:
             return get(
-                self.URI_BASE + self.RESOURCE_NAME,
-                params=params,
-                headers=self._headers
+                self.URI_BASE + self.RESOURCE_NAME, params=params, headers=self._headers
             )
 
-        id = params.pop('id')
+        id = params.pop("id")
         return get(
-            self.URI_BASE + self.RESOURCE_NAME + '/{0}'.format(id),
+            self.URI_BASE + self.RESOURCE_NAME + "/{0}".format(id),
             params=params,
-            headers=self._headers
+            headers=self._headers,
         )
 
     def _validate_response(self, response):
@@ -161,10 +171,9 @@ class BaseClient(object):
             raise BadRequestException(str(http_error))
 
         response_data = response.json()
-        if response_data['status_code'] != self.RESPONSE_STATUS_OK:
+        if response_data["status_code"] != self.RESPONSE_STATUS_OK:
             raise InvalidResponseException(
-                'Response code {0}: {1}'.format(
-                    response_data['status_code'],
-                    response_data['error']
+                "Response code {0}: {1}".format(
+                    response_data["status_code"], response_data["error"]
                 )
             )
