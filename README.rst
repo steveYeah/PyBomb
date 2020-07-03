@@ -25,6 +25,9 @@ Install
 
 Examples
 --------
+To see a working example of Pybomb, take a look at the example project PyBomb-demo
+https://github.com/steveYeah/PyBomb-demo
+
 **GamesClient - search**
 
 .. code-block::
@@ -75,10 +78,6 @@ Examples
   print response.num_page_results
   print response.num_total_results
 
-**More examples**
-
-To see a working example of Pybomb, take a look at the example project GameSearch
-https://github.com/steveYeah/gamesearch
 
 Documentation
 -------------
