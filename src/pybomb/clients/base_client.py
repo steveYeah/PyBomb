@@ -1,18 +1,18 @@
 """
 Base client to extend to create clients for endpoints of the GiantBomb API
 """
-import pkg_resources
 from collections import namedtuple
 
+import pkg_resources
 from requests import get
 from requests.exceptions import HTTPError
 
 
 from pybomb.exceptions import (
-    InvalidReturnFieldException,
     BadRequestException,
     InvalidFilterFieldException,
     InvalidResponseException,
+    InvalidReturnFieldException,
     InvalidSortFieldException,
 )
 from pybomb.response import Response
@@ -42,38 +42,13 @@ class BaseClient(object):
         :param api_key: string
         :param default_format: string
         """
-        self._api_key = api_key
-        self._default_format = default_format
+        self.api_key = api_key
+        self.default_format = default_format
         self._headers = {
             "User-Agent": "Pybomb {0}".format(
                 pkg_resources.require("pybomb")[0].version
             )
         }
-
-    @property
-    def api_key(self):
-        """
-        Giant Bomb API key
-
-        :return: string
-        """
-        return self._api_key
-
-    @api_key.setter
-    def api_key(self, api_key):
-        """
-        :param api_key: string
-        """
-        self._api_key = api_key
-
-    @property
-    def default_format(self):
-        """
-        Default API response type
-
-        :return: string
-        """
-        return self._default_format
 
     def _validate_return_fields(self, return_fields):
         """
@@ -132,10 +107,8 @@ class BaseClient(object):
         :param params: dict
         :return: pybomb.clients.response
         """
-        params["api_key"] = self._api_key
-
-        if "format" not in params:
-            params["format"] = self._default_format
+        params["api_key"] = self.api_key
+        params["format"] = self.default_format
 
         response = self._query_api(params, direct)
         self._validate_response(response)

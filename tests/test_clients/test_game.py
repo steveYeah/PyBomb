@@ -1,15 +1,14 @@
 import pkg_resources
-
 import pytest
-from mock import patch, MagicMock
-from requests.models import Response as RequestsResponse
+from mock import MagicMock, patch
 from requests.exceptions import HTTPError
+from requests.models import Response as RequestsResponse
 
 from pybomb.clients.game_client import GameClient
 from pybomb.exceptions import (
-    InvalidReturnFieldException,
     BadRequestException,
     InvalidResponseException,
+    InvalidReturnFieldException,
 )
 from pybomb.response import Response
 
@@ -63,6 +62,19 @@ class TestGameClient:
             headers={"User-Agent": "Pybomb {}".format(version)},
         )
 
+    def test_use_given_return_format(
+        self, game_client, mock_response, mock_requests_get
+    ):
+        game_client.default_format = game_client.RESPONSE_FORMAT_XML
+        res = game_client.fetch(1)
+        assert isinstance(res, Response)
+
+        mock_requests_get.assert_called_once_with(
+            "http://www.giantbomb.com/api/game/1",
+            params={"api_key": "fake_key", "format": "xml"},
+            headers={"User-Agent": "Pybomb {}".format(version)},
+        )
+
     def test_can_specify_return_fields(self, game_client, mock_requests_get):
         res = game_client.fetch(1, ("id", "name"))
         assert isinstance(res, Response)
@@ -75,13 +87,13 @@ class TestGameClient:
 
     def test_invalid_return_fields(self, game_client):
         with pytest.raises(InvalidReturnFieldException):
-            res = game_client.fetch(1, ("bad", "params"))
+            game_client.fetch(1, ("bad", "params"))
 
     def test_bad_giantbomb_request(self, game_client, mock_response):
         mock_response.raise_for_status.side_effect = HTTPError("Test error")
 
         with pytest.raises(BadRequestException):
-            res = game_client.fetch(1)
+            game_client.fetch(1)
 
     def test_bad_giantbomb_response(self, game_client, mock_response):
         mock_response_json = mock_response.json()
@@ -90,4 +102,4 @@ class TestGameClient:
         mock_response.json.return_value = mock_response_json
 
         with pytest.raises(InvalidResponseException):
-            res = game_client.fetch(1)
+            game_client.fetch(1)

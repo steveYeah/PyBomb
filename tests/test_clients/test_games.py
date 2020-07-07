@@ -1,17 +1,17 @@
 import pkg_resources
-
 import pytest
-from mock import patch, MagicMock
-from requests.models import Response as RequestsResponse
+from mock import MagicMock, patch
 from requests.exceptions import HTTPError
+from requests.models import Response as RequestsResponse
 
+import pybomb
 from pybomb.clients.games_client import GamesClient
 from pybomb.exceptions import (
-    InvalidReturnFieldException,
     BadRequestException,
-    InvalidResponseException,
-    InvalidSortFieldException,
     InvalidFilterFieldException,
+    InvalidResponseException,
+    InvalidReturnFieldException,
+    InvalidSortFieldException,
 )
 from pybomb.response import Response
 
@@ -73,6 +73,23 @@ class TestGamesClient:
         with pytest.raises(InvalidResponseException):
             getattr(games_client, search_method)(call_params)
 
+    class TestGeneral:
+        def test_use_given_return_format(self, games_client, mock_requests_get):
+            games_client.default_format = games_client.RESPONSE_FORMAT_XML
+
+            res = games_client.quick_search("game name")
+            assert isinstance(res, Response)
+
+            mock_requests_get.assert_called_once_with(
+                "http://www.giantbomb.com/api/games",
+                params={
+                    "filter": "name:game name",
+                    "api_key": "fake_key",
+                    "format": "xml",
+                },
+                headers={"User-Agent": "Pybomb {}".format(version)},
+            )
+
     class TestQuickSearch:
         def test_search(self, games_client, mock_response, mock_requests_get):
             res = games_client.quick_search("game name")
@@ -95,6 +112,20 @@ class TestGamesClient:
                 "http://www.giantbomb.com/api/games",
                 params={
                     "filter": "name:game name",
+                    "api_key": "fake_key",
+                    "format": "json",
+                },
+                headers={"User-Agent": "Pybomb {}".format(version)},
+            )
+
+        def test_search_with_platform(self, games_client, mock_requests_get):
+            res = games_client.quick_search("game name", pybomb.PS1)
+
+            assert isinstance(res, Response)
+            mock_requests_get.assert_called_once_with(
+                "http://www.giantbomb.com/api/games",
+                params={
+                    "filter": f"name:game name,platforms:{pybomb.PS1}",
                     "api_key": "fake_key",
                     "format": "json",
                 },
