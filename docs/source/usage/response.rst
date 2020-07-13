@@ -13,4 +13,3 @@ Responses are wrapped up in the `pybomb.response` object::
     print response.uri
     print response.num_page_results
     print response.num_total_results
-

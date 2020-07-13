@@ -1,3 +1,4 @@
+"""Tests for the PyBomb GamesClient."""
 import pkg_resources
 import pytest
 from mock import MagicMock, patch
@@ -20,13 +21,17 @@ version = pkg_resources.require("pybomb")[0].version
 
 
 class TestGamesClient:
+    """Tests and fixtures for the GamesClient."""
+
     @pytest.fixture
     def mock_requests_get(self):
+        """Request GET test mock."""
         with patch("pybomb.clients.base_client.get") as req_mock:
             yield req_mock
 
     @pytest.fixture
     def mock_response(self):
+        """Raw response test mock."""
         mock_response = MagicMock(RequestsResponse)
         mock_response.url = "https://fake.com"
 
@@ -41,6 +46,10 @@ class TestGamesClient:
 
     @pytest.fixture
     def games_client(self, mock_response, mock_requests_get):
+        """Test mock GamesClient.
+
+        Will mock request to GB API.
+        """
         mock_requests_get.return_value = mock_response
         games_client = GamesClient("fake_key")
 
@@ -53,6 +62,7 @@ class TestGamesClient:
     def test_bad_giantbomb_request(
         self, search_method, call_params, games_client, mock_response
     ):
+        """Test bad request errors are correctly handled."""
         mock_response.raise_for_status.side_effect = HTTPError("Test error")
 
         with pytest.raises(BadRequestException):
@@ -65,6 +75,7 @@ class TestGamesClient:
     def test_bad_giantbomb_response(
         self, search_method, call_params, games_client, mock_response
     ):
+        """Test bad response errors are correctly handled."""
         mock_response_json = mock_response.json()
         mock_response_json["status_code"] = 2
         mock_response_json["error"] = "Badness"
@@ -74,7 +85,10 @@ class TestGamesClient:
             getattr(games_client, search_method)(call_params)
 
     class TestGeneral:
+        """General tests for the client across methods."""
+
         def test_use_given_return_format(self, games_client, mock_requests_get):
+            """Test response format is used in GB API call."""
             games_client.default_format = games_client.RESPONSE_FORMAT_XML
 
             res = games_client.quick_search("game name")
@@ -91,7 +105,10 @@ class TestGamesClient:
             )
 
     class TestQuickSearch:
+        """Tests for the quick_search method."""
+
         def test_search(self, games_client, mock_response, mock_requests_get):
+            """Test response and API call are as expected."""
             res = games_client.quick_search("game name")
 
             assert isinstance(res, Response)
@@ -119,6 +136,7 @@ class TestGamesClient:
             )
 
         def test_search_with_platform(self, games_client, mock_requests_get):
+            """Test search with a platform filter."""
             res = games_client.quick_search("game name", pybomb.PS1)
 
             assert isinstance(res, Response)
@@ -136,6 +154,7 @@ class TestGamesClient:
             "sort_dec, sort_direction", [(True, "desc"), (False, "asc")]
         )
         def test_sort(self, sort_dec, sort_direction, games_client, mock_requests_get):
+            """Test search with sort order and direction."""
             res = games_client.quick_search(
                 "game name", sort_by="date_added", desc=sort_dec
             )
@@ -153,11 +172,15 @@ class TestGamesClient:
             )
 
         def test_invaild_sort(self, games_client):
+            """Test use of invalid sort field is caught and handled correctly."""
             with pytest.raises(InvalidSortFieldException):
                 games_client.quick_search("game name", sort_by="aliases")
 
     class TestSearch:
+        """Test full seach method."""
+
         def test_filter_search(self, games_client, mock_response, mock_requests_get):
+            """Test search filters are applied to GB API call."""
             res = games_client.search({"name": "game name"})
 
             assert isinstance(res, Response)
@@ -185,10 +208,12 @@ class TestGamesClient:
             )
 
         def test_invalid_filters(self, games_client):
+            """Test use of invalid filters are caught and handled correctly."""
             with pytest.raises(InvalidFilterFieldException):
                 games_client.search({"image": "image_file_name.jpg"})
 
         def test_can_specify_return_fields(self, games_client, mock_requests_get):
+            """Test return fields are applied to GB API call correctly."""
             res = games_client.search(
                 {"name": "game name"}, return_fields=("id", "name")
             )
@@ -206,6 +231,7 @@ class TestGamesClient:
             )
 
         def test_invalid_return_fields(self, games_client):
+            """Test use of invalid return fields are caught and handled correctly."""
             with pytest.raises(InvalidReturnFieldException):
                 games_client.search({"name": "game name"}, return_fields=("bad"))
 
@@ -213,6 +239,7 @@ class TestGamesClient:
             "sort_dec, sort_direction", [(True, "desc"), (False, "asc")]
         )
         def test_sort(self, sort_dec, sort_direction, games_client, mock_requests_get):
+            """Test sort field is applied to GB API call correctly."""
             res = games_client.search(
                 {"name": "game name"}, sort_by="date_added", desc=sort_dec
             )
@@ -230,10 +257,12 @@ class TestGamesClient:
             )
 
         def test_invaild_sort(self, games_client):
+            """Test use of invalid sort field is caught and handled correctly."""
             with pytest.raises(InvalidSortFieldException):
                 games_client.search({"name": "game name"}, sort_by="aliases")
 
         def test_limit(self, games_client, mock_requests_get):
+            """Test return limit is applied to GB API call correctly."""
             res = games_client.search({"name": "game name"}, limit=1)
             assert isinstance(res, Response)
 
@@ -249,6 +278,7 @@ class TestGamesClient:
             )
 
         def test_offset(self, games_client, mock_requests_get):
+            """Test offset is applied to GB API call correctly."""
             res = games_client.search({"name": "game name"}, offset=10)
             assert isinstance(res, Response)
 

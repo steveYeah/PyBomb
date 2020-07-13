@@ -1,5 +1,5 @@
-"""
-A library of clients for the main resources of the GiantBomb API
+"""A library of clients for the main resources of the GiantBomb API.
+
 http://www.giantbomb.com/api/documentation#toc-0-1
 """
 from pybomb.clients.game_client import GameClient

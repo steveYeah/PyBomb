@@ -1,6 +1,4 @@
-"""
-Base client to extend to create clients for endpoints of the GiantBomb API
-"""
+"""Base client to extend to create clients for endpoints of the GiantBomb API."""
 from collections import namedtuple
 
 import pkg_resources
@@ -22,9 +20,7 @@ ResponseParam = namedtuple("ResponseParam", ("is_filter", "is_sort"))
 
 
 class BaseClient(object):
-    """
-    Base class for API resource clients
-    """
+    """Base class for GB API resource clients."""
 
     URI_BASE = "http://www.giantbomb.com/api/"
     RESPONSE_FORMAT_JSON = "json"
@@ -38,9 +34,12 @@ class BaseClient(object):
     SORT_ORDER_DESCENDING = "desc"
 
     def __init__(self, api_key, default_format=RESPONSE_FORMAT_JSON):
-        """
-        :param api_key: string
-        :param default_format: string
+        """Init BaseClient with GB API key and default_response_format.
+
+        Args:
+            api_key: The GB API key to use for each request
+            default_format: The default response format for the return data.
+                TODO: Why?
         """
         self.api_key = api_key
         self.default_format = default_format
@@ -51,9 +50,14 @@ class BaseClient(object):
         }
 
     def _validate_return_fields(self, return_fields):
-        """
-        :param return_fields: tuple
-        :raises: pybomb.exceptions.InvalidReturnFieldException
+        """Validate the given return fields against those allowed on the resource.
+
+        Args:
+            return_fields: Requested return fields
+
+        Raises:
+            InvalidReturnFieldException: Invalid return fields
+                requested for the resource.
         """
         for return_field in return_fields:
             if return_field not in self.RESPONSE_FIELD_MAP:
@@ -62,9 +66,13 @@ class BaseClient(object):
                 )
 
     def _validate_sort_field(self, sort_by):
-        """
-        :param sort_by: string
-        :raises: pybomb.exceptions.InvalidSortFieldException
+        """Validate the given sort field against those allowed on the resource.
+
+        Args:
+            sort_by: The field to sort the response by
+
+        Raises:
+            InvalidSortFieldException: Invalid sort supplied for the resource
         """
         if (
             sort_by not in self.RESPONSE_FIELD_MAP
@@ -75,9 +83,14 @@ class BaseClient(object):
             )
 
     def _validate_filter_fields(self, filter_by):
-        """
-        :param filter_by: dict
-        :raises: pybomb.exceptions.InvalidFilterFieldException
+        """Validate the given filter fields against those allowed on the resource.
+
+        Args:
+            filter_by: Requested filter fields
+
+        Raises:
+            InvalidFilterFieldException: Invalid filter fields requested
+                for the resource
         """
         for filter_field in filter_by:
             if (
@@ -90,9 +103,13 @@ class BaseClient(object):
 
     @staticmethod
     def _create_search_filter(filter_by):
-        """
-        :param filter_by:
-        :return: dict
+        """Create a filter string to be used for the request using the supplied filters.
+
+        Args:
+            filter_by: Requested filter fields
+
+        Returns:
+            A string containing the filters in the format required by GB API
         """
         return ",".join(
             [
@@ -103,9 +120,14 @@ class BaseClient(object):
         )
 
     def _query(self, params, direct=False):
-        """
-        :param params: dict
-        :return: pybomb.clients.response
+        """Add required params, call GB API and format the response.
+
+        Args:
+            params: All of the params requested for the call
+            direct: Is this a direct call for a resource or a search query
+
+        Returns:
+            A Response object containing the GB API response
         """
         params["api_key"] = self.api_key
         params["format"] = self.default_format
@@ -116,9 +138,14 @@ class BaseClient(object):
         return Response.from_response_data(response)
 
     def _query_api(self, params, direct=False):
-        """
-        :param params: dict
-        :return: requests.models.Response
+        """Handle actual query to GB API.
+
+        Args:
+            params: All requests and required resource query parameters
+            direct: Is this a direct call for a resource or a search query
+
+        Returns:
+            The raw requests Response from the GB call
         """
         if not direct:
             return get(
@@ -133,10 +160,14 @@ class BaseClient(object):
         )
 
     def _validate_response(self, response):
-        """
-        :param response: requests.models.Response
-        :raises: pybomb.exceptions.InvalidResponseException
-        :raises: pybomb.exceptions.BadRequestException
+        """Validate the response from the GB API.
+
+        Args:
+            response: The raw requests response from the GB call
+
+        Raises:
+            InvalidResponseException: The response was invalid
+            BadRequestException: The request to the GB API was invalid
         """
         try:
             response.raise_for_status()
