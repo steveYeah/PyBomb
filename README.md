@@ -1,4 +1,5 @@
 ![Tests](https://github.com/steveYeah/PyBomb/workflows/Tests/badge.svg)
+![Coverage](https://github.com/steveYeah/PyBomb/workflows/Coverage/badge.svg)
 
 # PyBomb
 
