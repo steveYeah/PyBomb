@@ -7,6 +7,7 @@ license = "MIT"
 readme="README.md"
 homepage="https://github.com/steveYeah/PyBomb"
 repository="https://github.com/steveYeah/PyBomb"
+documentation = "https://pybomb.readthedocs.io/"
 keywords=["giantbomb", "giant", "bomb", "game", "api", "client"]
 
 
