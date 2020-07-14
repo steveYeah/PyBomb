@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pybomb"
-version = "0.2.0"
+version = "0.2.1"
 description = "Simple clients for the Giant Bomb API."
 authors = ["steveYeah <hutchinsteve@gmail.com>"]
 license = "MIT"
@@ -13,6 +13,7 @@ keywords=["giantbomb", "giant", "bomb", "game", "api", "client"]
 [tool.poetry.dependencies]
 python = "^3.6"
 requests = "^2.19.0"
+importlib_metadata = {version = "^1.7.0", python = "<3.8"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.4.3"

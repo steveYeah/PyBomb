@@ -2,8 +2,19 @@
 
 http://www.giantbomb.com/api/documentation#toc-0-1
 """
+try:
+    from importlib.metadata import version, PackageNotFoundError
+except ImportError:  # pragma: no cover
+    from importlib_metadata import version, PackageNotFoundError
+
 from pybomb.clients.game_client import GameClient
 from pybomb.clients.games_client import GamesClient
+
+
+try:
+    __version__ = version(__name__)
+except PackageNotFoundError:  # pragma: no cover
+    __version__ = "unknown"
 
 # Platform ID's
 PS1 = 22
