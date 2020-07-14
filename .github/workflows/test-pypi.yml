@@ -5,14 +5,14 @@ on:
       - master
 jobs:
   test_pypi:
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
           python-version: '3.8'
           architecture: x64
-      - run: pip install poetry=1.0.9
+      - run: pip install poetry==1.0.9
       - run: >-
           poetry version patch &&
           version=$(poetry version | awk '{print $2}') &&
