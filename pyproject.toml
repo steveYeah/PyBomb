@@ -4,14 +4,14 @@ version = "0.2.0"
 description = "Simple clients for the Giant Bomb API."
 authors = ["steveYeah <hutchinsteve@gmail.com>"]
 license = "MIT"
-readme="README.rst"
+readme="README.md"
 homepage="https://github.com/steveYeah/PyBomb"
 repository="https://github.com/steveYeah/PyBomb"
 keywords=["giantbomb", "giant", "bomb", "game", "api", "client"]
 
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.6"
 requests = "^2.19.0"
 
 [tool.poetry.dev-dependencies]

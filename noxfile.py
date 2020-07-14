@@ -31,7 +31,7 @@ def black(session: Session) -> None:
     session.run("black", *args)
 
 
-@nox.session(python=["3.7", "3.8"])
+@nox.session(python=["3.6", "3.7", "3.8"])
 def tests(session: Session) -> None:
     """Run test suite."""
     args = session.posargs or ["--cov"]
@@ -40,7 +40,7 @@ def tests(session: Session) -> None:
     session.run("pytest", *args)
 
 
-@nox.session(python=["3.7", "3.8"])
+@nox.session(python=["3.6", "3.7", "3.8"])
 def lint(session: Session) -> None:
     """Lint using flake8."""
     args = session.posargs or locations
