@@ -1,14 +1,12 @@
-"""
-Client for the Games resource of GiantBomb
+"""Client for the Games resource of GiantBomb.
+
 https://www.giantbomb.com/api/documentation#toc-0-17
 """
 from pybomb.clients.base_client import BaseClient, ResponseParam
 
 
 class GamesClient(BaseClient):
-    """
-    Client for the 'games' API resource
-    """
+    """Client for the 'games' API resource."""
 
     RESOURCE_NAME = "games"
 
@@ -41,18 +39,25 @@ class GamesClient(BaseClient):
         limit=None,
         offset=None,
     ):
-        """
-        Full search of games resource, supporting all search fields
-        available in API
+        """Full search of games resource.
+
+        Supports all search fields available in API
         http://www.giantbomb.com/api/documentation#toc-0-17
 
-        :param filter_by: dict
-        :param return_fields: tuple
-        :param sort_by: string
-        :param desc: bool
-        :param limit: int
-        :param offset: int
-        :return: pybomb.clients.Response
+        Args:
+            filter_by: A list of fields to filter the search by. These will
+                be validated against the availiable search fields
+            return_fields: A list of fields to be returned by the response.
+                These will be validated against the availiable return fields.
+                The default is to return everything
+            sort_by: The field to sort the items in the reponse by.
+                These will be validated against the availiable sort fields.
+            desc: If sort direction is DESC or not (ASC). Defaults to True
+            limit: The max number of items to request
+            offset: The start offset for the return items, based on the given sort.
+
+        Returns:
+             A PyBomb Response containg the results of the search
         """
         self._validate_filter_fields(filter_by)
         search_filter = self._create_search_filter(filter_by)
@@ -86,15 +91,21 @@ class GamesClient(BaseClient):
         return response
 
     def quick_search(self, name, platform=None, sort_by=None, desc=True):
-        """
-        Quick search method that allows you to search for a game using only the
-        title and the platform
+        """Search with a simplier API.
 
-        :param name: string
-        :param platform: int
-        :param sort_by: string
-        :param desc: bool
-        :return: pybomb.clients.Response
+        This method allows you to search for a game using only the title and
+        the platform.
+
+        Args:
+            name: The name of the game to search for
+            platform: The platform ID that the game is required to have.
+                When set to None no platform filters will be added. Defaults to None
+            sort_by: The field to sort the items in the reponse by.
+                These will be validated against the availiable sort fields.
+            desc: If sort direction is DESC or not (ASC). Defaults to True
+
+        Returns:
+             A PyBomb Response containg the results of the search
         """
         if platform is None:
             query_filter = "name:{0}".format(name)

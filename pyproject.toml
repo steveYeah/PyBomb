@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "pybomb"
+version = "0.2.1"
+description = "Simple clients for the Giant Bomb API."
+authors = ["steveYeah <hutchinsteve@gmail.com>"]
+license = "MIT"
+readme="README.md"
+homepage="https://github.com/steveYeah/PyBomb"
+repository="https://github.com/steveYeah/PyBomb"
+documentation = "https://pybomb.readthedocs.io/"
+keywords=["giantbomb", "giant", "bomb", "game", "api", "client"]
+
+
+[tool.poetry.dependencies]
+python = "^3.6"
+requests = "^2.19.0"
+importlib_metadata = {version = "^1.7.0", python = "<3.8"}
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.4.3"
+flake8 = "^3.8.3"
+sphinx = "^3.1.2"
+mock = "^2.0.0"
+black = "^19.10b0"
+flake8-black = "^0.2.0"
+flake8-bandit = "^2.1.2"
+flake8-bugbear = "^20.1.4"
+flake8-import-order = "^0.18.1"
+darglint = "^1.5.1"
+flake8-docstrings = "^1.5.0"
+coverage = {extras = ["toml"], version = "^5.2"}
+pytest-cov = "^2.10.0"
+safety = "^1.9.0"
+codecov = "^2.1.7"
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.coverage.run]
+branch = true
+source = ["pybomb"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 100
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

@@ -1,25 +1,22 @@
-"""
-The response types and factories for PyBomb
-"""
+"""The response types and factories for PyBomb."""
 from collections import namedtuple
 
 
 class Response(
     namedtuple("Response", ("uri", "num_page_results", "num_total_results", "results"))
 ):
-    """
-    An API response
-    """
+    """An API response."""
 
     @classmethod
     def from_response_data(cls, response_data):
-        """
-        Response factory
+        """Response factory.
 
-        :param response_data: requests.models.Response
-        :return: pybomb.clients.Response
-        """
+        Args:
+            response_data: Raw request response of API call
 
+        Returns:
+            A PyBomb Response containing the raw response data
+        """
         response_json = response_data.json()
 
         return cls(
