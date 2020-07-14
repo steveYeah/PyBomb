@@ -20,8 +20,8 @@
 # -- Project information -----------------------------------------------------
 
 project = "pybomb"
-copyright = "2018, Steve Hutchins"
 author = "Steve Hutchins"
+copyright = f"2020, {author}"
 
 # The short X.Y version
 version = ""
@@ -38,9 +38,7 @@ release = ""
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    "sphinx.ext.autodoc",
-]
+extensions = ["sphinx.ext.autodoc", "sphinx.ext.napoleon"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -126,7 +124,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "pybomb.tex", "pybomb Documentation", "Steve Hutchins", "manual"),
+    (master_doc, "pybomb.tex", "pybomb Documentation", "Steve Hutchins", "manual")
 ]
 
 
@@ -151,7 +149,7 @@ texinfo_documents = [
         "pybomb",
         "One line description of project.",
         "Miscellaneous",
-    ),
+    )
 ]
 
 
