@@ -1,7 +1,8 @@
 """Tests for the PyBomb GameClient."""
+from unittest.mock import MagicMock, patch
+
 import pkg_resources
 import pytest
-from mock import MagicMock, patch
 from requests.exceptions import HTTPError
 from requests.models import Response as RequestsResponse
 
@@ -21,13 +22,13 @@ class TestGameClient:
     """Tests and fixtures for the GameClient."""
 
     @pytest.fixture
-    def mock_requests_get(self):
+    def mock_requests_get(self) -> MagicMock:
         """Request GET test mock."""
         with patch("pybomb.clients.base_client.get") as req_mock:
             yield req_mock
 
     @pytest.fixture
-    def mock_response(self):
+    def mock_response(self) -> MagicMock:
         """Raw response test mock."""
         mock_response = MagicMock(RequestsResponse)
         mock_response.url = "https://fake.com"
@@ -42,7 +43,9 @@ class TestGameClient:
         return mock_response
 
     @pytest.fixture
-    def game_client(self, mock_response, mock_requests_get):
+    def game_client(
+        self, mock_response: MagicMock, mock_requests_get: MagicMock
+    ) -> GameClient:
         """Test mock GameClient.
 
         Will mock request to GB API.
@@ -52,7 +55,12 @@ class TestGameClient:
 
         return game_client
 
-    def test_can_fetch_game(self, game_client, mock_response, mock_requests_get):
+    def test_can_fetch_game(
+        self,
+        game_client: GameClient,
+        mock_response: MagicMock,
+        mock_requests_get: MagicMock,
+    ) -> None:
         """Test the fetch method.
 
         Check the reponse and call to GB API was correct.
@@ -76,8 +84,11 @@ class TestGameClient:
         )
 
     def test_use_given_return_format(
-        self, game_client, mock_response, mock_requests_get
-    ):
+        self,
+        game_client: GameClient,
+        mock_response: MagicMock,
+        mock_requests_get: MagicMock,
+    ) -> None:
         """Test response format is used in GB API call."""
         game_client.default_format = game_client.RESPONSE_FORMAT_XML
         res = game_client.fetch(1)
@@ -89,7 +100,9 @@ class TestGameClient:
             headers={"User-Agent": "Pybomb {}".format(version)},
         )
 
-    def test_can_specify_return_fields(self, game_client, mock_requests_get):
+    def test_can_specify_return_fields(
+        self, game_client: GameClient, mock_requests_get: MagicMock
+    ) -> None:
         """Test return fields are used and formatted correctly in GB API call."""
         res = game_client.fetch(1, ("id", "name"))
         assert isinstance(res, Response)
@@ -100,19 +113,23 @@ class TestGameClient:
             headers={"User-Agent": "Pybomb {}".format(version)},
         )
 
-    def test_invalid_return_fields(self, game_client):
+    def test_invalid_return_fields(self, game_client: GameClient) -> None:
         """Test return fields are correctly validated."""
         with pytest.raises(InvalidReturnFieldException):
             game_client.fetch(1, ("bad", "params"))
 
-    def test_bad_giantbomb_request(self, game_client, mock_response):
+    def test_bad_giantbomb_request(
+        self, game_client: GameClient, mock_response: MagicMock
+    ) -> None:
         """Test bad request errors are correctly handled."""
         mock_response.raise_for_status.side_effect = HTTPError("Test error")
 
         with pytest.raises(BadRequestException):
             game_client.fetch(1)
 
-    def test_bad_giantbomb_response(self, game_client, mock_response):
+    def test_bad_giantbomb_response(
+        self, game_client: GameClient, mock_response: MagicMock
+    ) -> None:
         """Test bad response errors are correctly handled."""
         mock_response_json = mock_response.json()
         mock_response_json["status_code"] = 2

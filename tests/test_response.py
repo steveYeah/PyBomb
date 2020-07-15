@@ -1,7 +1,7 @@
 """Tests for the PyBomb.Response module."""
+from unittest.mock import MagicMock
 
 import pytest
-from mock import MagicMock
 from requests.models import Response as RequestsResponse
 
 from pybomb.response import Response
@@ -11,7 +11,7 @@ class TestResponse:
     """Tests for the Response."""
 
     @pytest.fixture
-    def mock_response(self):
+    def mock_response(self) -> None:
         """Mock response fixture."""
         mock_response = MagicMock(RequestsResponse)
         mock_response.url = "https://fake.com"
@@ -25,7 +25,7 @@ class TestResponse:
 
         return mock_response
 
-    def test_response_factory(self, mock_response):
+    def test_response_factory(self, mock_response: MagicMock) -> None:
         """Test the from_response_data factory.
 
         Make sure the supplied raw response is used to create a Response object.
