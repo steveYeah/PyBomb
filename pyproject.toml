@@ -12,7 +12,7 @@ keywords=["giantbomb", "giant", "bomb", "game", "api", "client"]
 
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.6.1"
 requests = "^2.19.0"
 importlib_metadata = {version = "^1.7.0", python = "<3.8"}
 
@@ -32,6 +32,7 @@ coverage = {extras = ["toml"], version = "^5.2"}
 pytest-cov = "^2.10.0"
 safety = "^1.9.0"
 codecov = "^2.1.7"
+flake8-annotations = "^2.3.0"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
