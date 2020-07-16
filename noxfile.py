@@ -5,8 +5,9 @@ from typing import Any
 import nox
 from nox.sessions import Session
 
-nox.options.sessions = "lint", "safety", "tests"
+nox.options.sessions = "lint", "mypy", "safety", "tests"
 locations = "src", "tests", "noxfile.py", "docs/conf.py"
+package = "pybomb"
 
 
 def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> None:
@@ -36,8 +37,10 @@ def tests(session: Session) -> None:
     """Run test suite."""
     args = session.posargs or ["--cov"]
     session.run("poetry", "install", "--no-dev", external=True)
-    install_with_constraints(session, "coverage[toml]", "pytest", "pytest-cov", "mock")
-    session.run("pytest", *args)
+    install_with_constraints(
+        session, "coverage[toml]", "pytest", "pytest-cov", "typeguard"
+    )
+    session.run("pytest", f"--typeguard-packages={package}", *args)
 
 
 @nox.session(python=["3.6", "3.7", "3.8"])
@@ -87,5 +90,13 @@ def coverage(session: Session) -> None:
 def docs(session: Session) -> None:
     """Build the documentation."""
     session.run("poetry", "install", "--no-dev", external=True)
-    install_with_constraints(session, "sphinx")
+    install_with_constraints(session, "sphinx", "sphinx-autodoc-typehints")
     session.run("sphinx-build", "docs", "docs/_build")
+
+
+@nox.session(python=["3.7", "3.8"])
+def mypy(session: Session) -> None:
+    """Run static type checker."""
+    args = session.posargs or locations
+    install_with_constraints(session, "mypy")
+    session.run("mypy", *args)

@@ -104,7 +104,7 @@ class TestGameClient:
         self, game_client: GameClient, mock_requests_get: MagicMock
     ) -> None:
         """Test return fields are used and formatted correctly in GB API call."""
-        res = game_client.fetch(1, ("id", "name"))
+        res = game_client.fetch(1, ["id", "name"])
         assert isinstance(res, Response)
 
         mock_requests_get.assert_called_once_with(
@@ -116,7 +116,7 @@ class TestGameClient:
     def test_invalid_return_fields(self, game_client: GameClient) -> None:
         """Test return fields are correctly validated."""
         with pytest.raises(InvalidReturnFieldException):
-            game_client.fetch(1, ("bad", "params"))
+            game_client.fetch(1, ["bad", "params"])
 
     def test_bad_giantbomb_request(
         self, game_client: GameClient, mock_response: MagicMock

@@ -3,9 +3,9 @@
 http://www.giantbomb.com/api/documentation#toc-0-1
 """
 try:
-    from importlib.metadata import version, PackageNotFoundError
+    from importlib.metadata import version, PackageNotFoundError  # type: ignore
 except ImportError:  # pragma: no cover
-    from importlib_metadata import version, PackageNotFoundError
+    from importlib_metadata import version, PackageNotFoundError  # type: ignore
 
 from pybomb.clients.game_client import GameClient
 from pybomb.clients.games_client import GamesClient

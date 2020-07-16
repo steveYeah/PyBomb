@@ -11,7 +11,7 @@ class TestResponse:
     """Tests for the Response."""
 
     @pytest.fixture
-    def mock_response(self) -> None:
+    def mock_response(self) -> MagicMock:
         """Mock response fixture."""
         mock_response = MagicMock(RequestsResponse)
         mock_response.url = "https://fake.com"

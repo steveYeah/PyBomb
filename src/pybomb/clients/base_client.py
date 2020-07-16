@@ -1,6 +1,6 @@
 """Base client to extend to create clients for endpoints of the GiantBomb API."""
 from collections import namedtuple
-from typing import Any, Dict, List
+from typing import Dict, List, Union
 
 import pkg_resources
 from requests import get, Response as RequestsResponse
@@ -26,10 +26,10 @@ class BaseClient(object):
     URI_BASE = "http://www.giantbomb.com/api/"
     RESPONSE_FORMAT_JSON = "json"
     RESPONSE_FORMAT_XML = "xml"
-    RESPONSE_FIELD_MAP = None
+    RESPONSE_FIELD_MAP: Dict[str, ResponseParam] = {}
     RESPONSE_STATUS_OK = 1
 
-    RESOURCE_NAME = None
+    RESOURCE_NAME = ""
 
     SORT_ORDER_ASCENDING = "asc"
     SORT_ORDER_DESCENDING = "desc"
@@ -85,7 +85,7 @@ class BaseClient(object):
                 '"{0}" is an invalid sort field'.format(sort_by)
             )
 
-    def _validate_filter_fields(self, filter_by: Dict[str, Any]) -> None:
+    def _validate_filter_fields(self, filter_by: Dict[str, Union[str, int]]) -> None:
         """Validate the given filter fields against those allowed on the resource.
 
         Args:
@@ -105,7 +105,7 @@ class BaseClient(object):
                 )
 
     @staticmethod
-    def _create_search_filter(filter_by: Dict[str, Any]) -> str:
+    def _create_search_filter(filter_by: Dict[str, Union[str, int]]) -> str:
         """Create a filter string to be used for the request using the supplied filters.
 
         Args:
@@ -122,7 +122,9 @@ class BaseClient(object):
             ]
         )
 
-    def _query(self, params: Dict[str, Any], direct: bool = False) -> Response:
+    def _query(
+        self, params: Dict[str, Union[str, int]], direct: bool = False
+    ) -> Response:
         """Add required params, call GB API and format the response.
 
         Args:
@@ -141,7 +143,7 @@ class BaseClient(object):
         return Response.from_response_data(response)
 
     def _query_api(
-        self, params: Dict[str, Any], direct: bool = False
+        self, params: Dict[str, Union[str, int]], direct: bool = False
     ) -> RequestsResponse:
         """Handle actual query to GB API.
 

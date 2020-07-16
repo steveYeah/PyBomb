@@ -2,7 +2,7 @@
 
 https://www.giantbomb.com/api/documentation#toc-0-17
 """
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from pybomb.clients.base_client import BaseClient, ResponseParam
 from pybomb.response import Response
@@ -65,7 +65,7 @@ class GamesClient(BaseClient):
         self._validate_filter_fields(filter_by)
         search_filter = self._create_search_filter(filter_by)
 
-        search_params = {"filter": search_filter}
+        search_params: Dict[str, Union[str, int]] = {"filter": search_filter}
 
         if return_fields is not None:
             self._validate_return_fields(return_fields)
@@ -121,7 +121,7 @@ class GamesClient(BaseClient):
         else:
             query_filter = "name:{0},platforms:{1}".format(name, platform)
 
-        search_params = {"filter": query_filter}
+        search_params: Dict[str, Union[str, int]] = {"filter": query_filter}
 
         if sort_by is not None:
             self._validate_sort_field(sort_by)

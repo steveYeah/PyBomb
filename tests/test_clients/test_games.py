@@ -249,7 +249,7 @@ class TestGamesClient:
         ) -> None:
             """Test return fields are applied to GB API call correctly."""
             res = games_client.search(
-                {"name": "game name"}, return_fields=("id", "name")
+                {"name": "game name"}, return_fields=["id", "name"]
             )
             assert isinstance(res, Response)
 
@@ -267,7 +267,7 @@ class TestGamesClient:
         def test_invalid_return_fields(self, games_client: GamesClient) -> None:
             """Test use of invalid return fields are caught and handled correctly."""
             with pytest.raises(InvalidReturnFieldException):
-                games_client.search({"name": "game name"}, return_fields=("bad"))
+                games_client.search({"name": "game name"}, return_fields=["bad"])
 
         @pytest.mark.parametrize(
             "sort_dec, sort_direction", [(True, "desc"), (False, "asc")]
