@@ -1,6 +1,8 @@
 """The response types and factories for PyBomb."""
 from collections import namedtuple
 
+from requests import Response as RequestsResponse
+
 
 class Response(
     namedtuple("Response", ("uri", "num_page_results", "num_total_results", "results"))
@@ -8,7 +10,7 @@ class Response(
     """An API response."""
 
     @classmethod
-    def from_response_data(cls, response_data):
+    def from_response_data(cls, response_data: RequestsResponse) -> "Response":
         """Response factory.
 
         Args:

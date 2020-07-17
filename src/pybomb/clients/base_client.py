@@ -1,8 +1,9 @@
 """Base client to extend to create clients for endpoints of the GiantBomb API."""
 from collections import namedtuple
+from typing import Dict, List, Union
 
 import pkg_resources
-from requests import get
+from requests import get, Response as RequestsResponse
 from requests.exceptions import HTTPError
 
 
@@ -25,15 +26,17 @@ class BaseClient(object):
     URI_BASE = "http://www.giantbomb.com/api/"
     RESPONSE_FORMAT_JSON = "json"
     RESPONSE_FORMAT_XML = "xml"
-    RESPONSE_FIELD_MAP = None
+    RESPONSE_FIELD_MAP: Dict[str, ResponseParam] = {}
     RESPONSE_STATUS_OK = 1
 
-    RESOURCE_NAME = None
+    RESOURCE_NAME = ""
 
     SORT_ORDER_ASCENDING = "asc"
     SORT_ORDER_DESCENDING = "desc"
 
-    def __init__(self, api_key, default_format=RESPONSE_FORMAT_JSON):
+    def __init__(
+        self, api_key: str, default_format: str = RESPONSE_FORMAT_JSON
+    ) -> None:
         """Init BaseClient with GB API key and default_response_format.
 
         Args:
@@ -49,7 +52,7 @@ class BaseClient(object):
             )
         }
 
-    def _validate_return_fields(self, return_fields):
+    def _validate_return_fields(self, return_fields: List[str]) -> None:
         """Validate the given return fields against those allowed on the resource.
 
         Args:
@@ -65,7 +68,7 @@ class BaseClient(object):
                     '"{0}" is an invalid return field'.format(return_field)
                 )
 
-    def _validate_sort_field(self, sort_by):
+    def _validate_sort_field(self, sort_by: str) -> None:
         """Validate the given sort field against those allowed on the resource.
 
         Args:
@@ -82,7 +85,7 @@ class BaseClient(object):
                 '"{0}" is an invalid sort field'.format(sort_by)
             )
 
-    def _validate_filter_fields(self, filter_by):
+    def _validate_filter_fields(self, filter_by: Dict[str, Union[str, int]]) -> None:
         """Validate the given filter fields against those allowed on the resource.
 
         Args:
@@ -102,7 +105,7 @@ class BaseClient(object):
                 )
 
     @staticmethod
-    def _create_search_filter(filter_by):
+    def _create_search_filter(filter_by: Dict[str, Union[str, int]]) -> str:
         """Create a filter string to be used for the request using the supplied filters.
 
         Args:
@@ -119,7 +122,9 @@ class BaseClient(object):
             ]
         )
 
-    def _query(self, params, direct=False):
+    def _query(
+        self, params: Dict[str, Union[str, int]], direct: bool = False
+    ) -> Response:
         """Add required params, call GB API and format the response.
 
         Args:
@@ -137,7 +142,9 @@ class BaseClient(object):
 
         return Response.from_response_data(response)
 
-    def _query_api(self, params, direct=False):
+    def _query_api(
+        self, params: Dict[str, Union[str, int]], direct: bool = False
+    ) -> RequestsResponse:
         """Handle actual query to GB API.
 
         Args:
@@ -159,7 +166,7 @@ class BaseClient(object):
             headers=self._headers,
         )
 
-    def _validate_response(self, response):
+    def _validate_response(self, response: RequestsResponse) -> None:
         """Validate the response from the GB API.
 
         Args:

@@ -2,7 +2,10 @@
 
 https://www.giantbomb.com/api/documentation#toc-0-17
 """
+from typing import Any, Dict, List, Optional, Union
+
 from pybomb.clients.base_client import BaseClient, ResponseParam
+from pybomb.response import Response
 
 
 class GamesClient(BaseClient):
@@ -32,20 +35,20 @@ class GamesClient(BaseClient):
 
     def search(
         self,
-        filter_by,
-        return_fields=None,
-        sort_by=None,
-        desc=True,
-        limit=None,
-        offset=None,
-    ):
+        filter_by: Dict[str, Any],
+        return_fields: List = None,
+        sort_by: Optional[str] = None,
+        desc: bool = True,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+    ) -> Response:
         """Full search of games resource.
 
         Supports all search fields available in API
         http://www.giantbomb.com/api/documentation#toc-0-17
 
         Args:
-            filter_by: A list of fields to filter the search by. These will
+            filter_by: A map of fields to filter the search by. These will
                 be validated against the availiable search fields
             return_fields: A list of fields to be returned by the response.
                 These will be validated against the availiable return fields.
@@ -62,7 +65,7 @@ class GamesClient(BaseClient):
         self._validate_filter_fields(filter_by)
         search_filter = self._create_search_filter(filter_by)
 
-        search_params = {"filter": search_filter}
+        search_params: Dict[str, Union[str, int]] = {"filter": search_filter}
 
         if return_fields is not None:
             self._validate_return_fields(return_fields)
@@ -90,7 +93,13 @@ class GamesClient(BaseClient):
 
         return response
 
-    def quick_search(self, name, platform=None, sort_by=None, desc=True):
+    def quick_search(
+        self,
+        name: str,
+        platform: Optional[int] = None,
+        sort_by: Optional[str] = None,
+        desc: bool = True,
+    ) -> Response:
         """Search with a simplier API.
 
         This method allows you to search for a game using only the title and
@@ -112,7 +121,7 @@ class GamesClient(BaseClient):
         else:
             query_filter = "name:{0},platforms:{1}".format(name, platform)
 
-        search_params = {"filter": query_filter}
+        search_params: Dict[str, Union[str, int]] = {"filter": query_filter}
 
         if sort_by is not None:
             self._validate_sort_field(sort_by)

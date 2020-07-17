@@ -2,7 +2,10 @@
 
 https://www.giantbomb.com/api/documentation#toc-0-16
 """
+from typing import Dict, List, Union
+
 from pybomb.clients.base_client import BaseClient, ResponseParam
+from pybomb.response import Response
 
 
 class GameClient(BaseClient):
@@ -52,7 +55,7 @@ class GameClient(BaseClient):
         "videos": ResponseParam(True, False),
     }
 
-    def fetch(self, id_, return_fields=None):
+    def fetch(self, id_: int, return_fields: List = None) -> Response:
         """Fetch details of a game by ID.
 
         Args:
@@ -64,7 +67,7 @@ class GameClient(BaseClient):
         Returns:
             A Pybomb Respose object containing the details of the requested game
         """
-        game_params = {"id": id_}
+        game_params: Dict[str, Union[str, int]] = {"id": id_}
 
         if return_fields is not None:
             self._validate_return_fields(return_fields)
