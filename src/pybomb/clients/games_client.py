@@ -4,11 +4,12 @@ https://www.giantbomb.com/api/documentation#toc-0-17
 """
 from typing import Any, Dict, List, Optional, Union
 
-from pybomb.clients.client import Client, ResponseParam
+from pybomb.clients.base.client import ResponseParam
+from pybomb.clients.base.search_client import SearchClient
 from pybomb.response import Response
 
 
-class GamesClient(Client):
+class GamesClient(SearchClient):
     """Client for the 'games' API resource."""
 
     RESOURCE_NAME = "games"

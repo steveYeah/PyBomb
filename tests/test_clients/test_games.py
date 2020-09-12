@@ -28,7 +28,7 @@ class TestGamesClient:
     @pytest.fixture
     def mock_requests_get(self) -> MagicMock:
         """Request GET test mock."""
-        with patch("pybomb.clients.client.get") as req_mock:
+        with patch("pybomb.clients.base.search_client.get") as req_mock:
             yield req_mock
 
     @pytest.fixture

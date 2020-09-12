@@ -4,11 +4,12 @@ https://www.giantbomb.com/api/documentation#toc-0-16
 """
 from typing import Dict, List, Union
 
-from pybomb.clients.client import Client, ResponseParam
+from pybomb.clients.base.client import ResponseParam
+from pybomb.clients.base.fetch_client import FetchClient
 from pybomb.response import Response
 
 
-class GameClient(Client):
+class GameClient(FetchClient):
     """Client for the 'game' API resource."""
 
     RESOURCE_NAME = "game"
@@ -75,6 +76,6 @@ class GameClient(Client):
 
             game_params["field_list"] = field_list
 
-        response = self._query(game_params, direct=True)
+        response = self._query(game_params)
 
         return response
