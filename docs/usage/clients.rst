@@ -15,15 +15,16 @@ Example
 Here is an example using the GamesClient::
 
     import pybomb
+    from pybomb.clients.client import Client
 
     # Using default `JSON` return type
-    my_key = your_giant_bomb_api_key
+    my_key = "your_giant_bomb_api_key"
     games_client = pybomb.GamesClient(api_key=my_key)
 
     # Using `XML` return type
     games_client = pybomb.GamesClient(
         api_key=my_key,
-        default_format=pybomb.clients.base_client.RESPONSE_FORMAT_XML
+        default_format=Client.RESPONSE_FORMAT_XML
     )
 
 Endpoint clients

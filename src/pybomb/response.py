@@ -1,13 +1,16 @@
 """The response types and factories for PyBomb."""
-from collections import namedtuple
+from typing import NamedTuple, Union
 
 from requests import Response as RequestsResponse
 
 
-class Response(
-    namedtuple("Response", ("uri", "num_page_results", "num_total_results", "results"))
-):
+class Response(NamedTuple):
     """An API response."""
+
+    uri: str
+    num_page_results: int
+    num_total_results: int
+    results: Union[list, dict]
 
     @classmethod
     def from_response_data(cls, response_data: RequestsResponse) -> "Response":

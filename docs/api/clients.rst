@@ -6,10 +6,10 @@ clients
     :undoc-members:
     :show-inheritance:
 
-base_client
+client
 --------------------------
 
-.. automodule:: pybomb.clients.base_client
+.. automodule:: pybomb.clients.client
     :members:
     :undoc-members:
     :show-inheritance:

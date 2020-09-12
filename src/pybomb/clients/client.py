@@ -1,6 +1,5 @@
 """Base client to extend to create clients for endpoints of the GiantBomb API."""
-from collections import namedtuple
-from typing import Dict, List, Union
+from typing import Dict, List, NamedTuple, Union
 
 import pkg_resources
 from requests import get, Response as RequestsResponse
@@ -17,10 +16,14 @@ from pybomb.exceptions import (
 from pybomb.response import Response
 
 
-ResponseParam = namedtuple("ResponseParam", ("is_filter", "is_sort"))
+class ResponseParam(NamedTuple):
+    """Control structure for marking fields as filter-able and sort-able."""
+
+    is_filter: bool
+    is_sort: bool
 
 
-class BaseClient(object):
+class Client:
     """Base class for GB API resource clients."""
 
     URI_BASE = "http://www.giantbomb.com/api/"
@@ -37,7 +40,7 @@ class BaseClient(object):
     def __init__(
         self, api_key: str, default_format: str = RESPONSE_FORMAT_JSON
     ) -> None:
-        """Init BaseClient with GB API key and default_response_format.
+        """Init Client with GB API key and default_response_format.
 
         Args:
             api_key: The GB API key to use for each request
