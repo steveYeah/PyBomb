@@ -63,7 +63,7 @@ class TestGameClient:
     ) -> None:
         """Test the fetch method.
 
-        Check the reponse and call to GB API was correct.
+        Check the call and response to/from GB API was correct.
         """
         res = game_client.fetch(1)
 
@@ -83,20 +83,19 @@ class TestGameClient:
             headers={"User-Agent": "Pybomb {}".format(version)},
         )
 
-    def test_use_given_return_format(
+    def test_use_json_return_format(
         self,
         game_client: GameClient,
         mock_response: MagicMock,
         mock_requests_get: MagicMock,
     ) -> None:
-        """Test response format is used in GB API call."""
-        game_client.default_format = game_client.RESPONSE_FORMAT_XML
+        """Test JSON response format is used in GB API call."""
         res = game_client.fetch(1)
         assert isinstance(res, Response)
 
         mock_requests_get.assert_called_once_with(
             "http://www.giantbomb.com/api/game/1",
-            params={"api_key": "fake_key", "format": "xml"},
+            params={"api_key": "fake_key", "format": "json"},
             headers={"User-Agent": "Pybomb {}".format(version)},
         )
 

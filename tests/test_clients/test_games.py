@@ -99,12 +99,10 @@ class TestGamesClient:
     class TestGeneral:
         """General tests for the client across methods."""
 
-        def test_use_given_return_format(
+        def test_use_json_return_format(
             self, games_client: GamesClient, mock_requests_get: MagicMock
         ) -> None:
-            """Test response format is used in GB API call."""
-            games_client.default_format = games_client.RESPONSE_FORMAT_XML
-
+            """Test JSON format is used in GB API call."""
             res = games_client.quick_search("game name")
             assert isinstance(res, Response)
 
@@ -113,7 +111,7 @@ class TestGamesClient:
                 params={
                     "filter": "name:game name",
                     "api_key": "fake_key",
-                    "format": "xml",
+                    "format": "json",
                 },
                 headers={"User-Agent": "Pybomb {}".format(version)},
             )
