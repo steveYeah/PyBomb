@@ -9,6 +9,15 @@ except ImportError:  # pragma: no cover
 
 from pybomb.clients.game_client import GameClient
 from pybomb.clients.games_client import GamesClient
+from pybomb.exceptions import (
+    BadRequestException,
+    ClientException,
+    InvalidFilterFieldException,
+    InvalidResponseException,
+    InvalidReturnFieldException,
+    InvalidSortFieldException,
+    PybombException,
+)
 
 
 try:
