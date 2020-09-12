@@ -27,28 +27,23 @@ class Client:
     """Base class for GB API resource clients."""
 
     URI_BASE = "http://www.giantbomb.com/api/"
-    RESPONSE_FORMAT_JSON = "json"
-    RESPONSE_FORMAT_XML = "xml"
+
     RESPONSE_FIELD_MAP: Dict[str, ResponseParam] = {}
     RESPONSE_STATUS_OK = 1
+    RESPONSE_FORMAT_JSON = "json"
 
     RESOURCE_NAME = ""
 
     SORT_ORDER_ASCENDING = "asc"
     SORT_ORDER_DESCENDING = "desc"
 
-    def __init__(
-        self, api_key: str, default_format: str = RESPONSE_FORMAT_JSON
-    ) -> None:
+    def __init__(self, api_key: str) -> None:
         """Init Client with GB API key and default_response_format.
 
         Args:
             api_key: The GB API key to use for each request
-            default_format: The default response format for the return data.
-                TODO: Why?
         """
         self.api_key = api_key
-        self.default_format = default_format
         self._headers = {
             "User-Agent": "Pybomb {0}".format(
                 pkg_resources.require("pybomb")[0].version
@@ -138,7 +133,7 @@ class Client:
             A Response object containing the GB API response
         """
         params["api_key"] = self.api_key
-        params["format"] = self.default_format
+        params["format"] = self.RESPONSE_FORMAT_JSON
 
         response = self._query_api(params, direct)
         self._validate_response(response)
