@@ -1,7 +1,13 @@
 """Exceptions used in this library."""
 
 
-class ClientException(Exception):
+class PybombException(Exception):
+    """Base Exception for library."""
+
+    pass
+
+
+class ClientException(PybombException):
     """Base Client Exception for module."""
 
     pass
