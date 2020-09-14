@@ -1,8 +1,9 @@
-"""Base client to extend to create clients for endpoints of the GiantBomb API."""
+"""Base client used by fetch and search clients."""
+from abc import ABC, abstractmethod
 from typing import Dict, List, NamedTuple, Union
 
 import pkg_resources
-from requests import get, Response as RequestsResponse
+from requests import Response as RequestsResponse
 from requests.exceptions import HTTPError
 
 
@@ -23,7 +24,7 @@ class ResponseParam(NamedTuple):
     is_sort: bool
 
 
-class Client:
+class Client(ABC):
     """Base class for GB API resource clients."""
 
     URI_BASE = "http://www.giantbomb.com/api/"
@@ -120,14 +121,11 @@ class Client:
             ]
         )
 
-    def _query(
-        self, params: Dict[str, Union[str, int]], direct: bool = False
-    ) -> Response:
+    def _query(self, params: Dict[str, Union[str, int]]) -> Response:
         """Add required params, call GB API and format the response.
 
         Args:
             params: All of the params requested for the call
-            direct: Is this a direct call for a resource or a search query
 
         Returns:
             A Response object containing the GB API response
@@ -135,34 +133,22 @@ class Client:
         params["api_key"] = self.api_key
         params["format"] = self.RESPONSE_FORMAT_JSON
 
-        response = self._query_api(params, direct)
+        response = self._query_api(params)
         self._validate_response(response)
 
         return Response.from_response_data(response)
 
-    def _query_api(
-        self, params: Dict[str, Union[str, int]], direct: bool = False
-    ) -> RequestsResponse:
+    @abstractmethod
+    def _query_api(self, params: Dict[str, Union[str, int]]) -> RequestsResponse:
         """Handle actual query to GB API.
 
         Args:
             params: All requests and required resource query parameters
-            direct: Is this a direct call for a resource or a search query
 
         Returns:
             The raw requests Response from the GB call
         """
-        if not direct:
-            return get(
-                self.URI_BASE + self.RESOURCE_NAME, params=params, headers=self._headers
-            )
-
-        id = params.pop("id")
-        return get(
-            self.URI_BASE + self.RESOURCE_NAME + "/{0}".format(id),
-            params=params,
-            headers=self._headers,
-        )
+        return RequestsResponse()  # pragma: no cover
 
     def _validate_response(self, response: RequestsResponse) -> None:
         """Validate the response from the GB API.
