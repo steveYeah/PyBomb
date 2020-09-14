@@ -133,6 +133,7 @@ class TestGamesClient:
 
             mock_response_json = mock_response.json()
             assert res.results == mock_response_json["results"]
+            assert res.result is None
 
             assert res.num_page_results == (
                 mock_response_json["number_of_page_results"]
@@ -218,6 +219,7 @@ class TestGamesClient:
 
             mock_response_json = mock_response.json()
             assert res.results == mock_response_json["results"]
+            assert res.result is None
 
             assert res.num_page_results == (
                 mock_response_json["number_of_page_results"]
