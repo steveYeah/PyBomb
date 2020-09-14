@@ -22,6 +22,7 @@ Here is an example showing the full usage of the `fetch` method::
     response = game_client.fetch(game_id, return_fields)
 
     print response.results
+    print response.result
     print response.uri
     print response.num_page_results
     print response.num_total_results

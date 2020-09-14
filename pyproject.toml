@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pybomb"
-version = "0.2.3"
+version = "0.2.4"
 description = "Simple clients for the Giant Bomb API."
 authors = ["steveYeah <hutchinsteve@gmail.com>"]
 license = "MIT"
