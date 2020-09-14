@@ -18,6 +18,9 @@ This will go into version 1.0 when all resources are supported.
   - games
   - game
 
+## Support OSS, and me :)
+If you find this project useful, please feel free to [buy me a coffee](https://ko-fi.com/steveyeah)
+
 ## Install
 
 ``` shell
@@ -27,7 +30,7 @@ pip install pybomb
 ## Examples
 
 To see a working example of Pybomb, take a look at the example project
-PyBomb-demo <https://github.com/steveYeah/PyBomb-demo>
+[PyBomb-demo](https://github.com/steveYeah/PyBomb-demo)
 
 **GamesClient - search**
 
@@ -78,4 +81,4 @@ PyBomb-demo <https://github.com/steveYeah/PyBomb-demo>
 ## Documentation
 
 The full documentation, including more examples can be found at
-<https://pybomb.readthedocs.org>
+[readthedocs](https://pybomb.readthedocs.org)
