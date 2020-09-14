@@ -1,3 +1,5 @@
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/C0C826VYD)
+
 ![Tests](https://github.com/steveYeah/PyBomb/workflows/Tests/badge.svg)
 ![Coverage](https://github.com/steveYeah/PyBomb/workflows/Coverage/badge.svg)
 ![Release Drafter](https://github.com/steveYeah/PyBomb/workflows/Release%20Drafter/badge.svg)
@@ -7,6 +9,7 @@
 [![Codecov](https://codecov.io/gh/steveYeah/PyBomb/branch/master/graph/badge.svg)](https://codecov.io/gh/steveYeah/PyBomb)
 [![PyPI](https://img.shields.io/pypi/v/PyBomb.svg)](https://pypi.org/project/PyBomb/)
 [![Read the Docs](https://readthedocs.org/projects/pybomb/badge/)](https://pybomb.readthedocs.io/)
+
 # PyBomb
 
 >
