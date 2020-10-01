@@ -88,7 +88,7 @@ The full documentation, including more examples can be found at
 
 ## Contributing
 
-This project uses [Poetry](https://www.google.com) and [Nox](https://nox.thea.codes/en/stable/) so make sure you have those setup!
+This project uses [Poetry](https://python-poetry.org/) and [Nox](https://nox.thea.codes/en/stable/) so make sure you have those setup!
 
 Whilst working you can use
 
