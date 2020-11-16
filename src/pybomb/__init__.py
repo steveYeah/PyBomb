@@ -3,12 +3,13 @@
 http://www.giantbomb.com/api/documentation#toc-0-1
 """
 try:
-    from importlib.metadata import version, PackageNotFoundError  # type: ignore
+    from importlib.metadata import PackageNotFoundError, version  # type: ignore
 except ImportError:  # pragma: no cover
     from importlib_metadata import version, PackageNotFoundError  # type: ignore
 
 from pybomb.clients.game_client import GameClient
 from pybomb.clients.games_client import GamesClient
+from pybomb.clients.platforms_client import PlatformsClient
 from pybomb.exceptions import (
     BadRequestException,
     ClientException,
@@ -18,7 +19,6 @@ from pybomb.exceptions import (
     InvalidSortFieldException,
     PybombException,
 )
-
 
 try:
     __version__ = version(__name__)
