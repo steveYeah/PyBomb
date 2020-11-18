@@ -6,7 +6,6 @@ import pkg_resources
 from requests import Response as RequestsResponse
 from requests.exceptions import HTTPError
 
-
 from pybomb.exceptions import (
     BadRequestException,
     InvalidFilterFieldException,
