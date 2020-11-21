@@ -20,7 +20,7 @@ class FetchClient(Client):
         """
         id = params.pop("id")
         return get(
-            self.URI_BASE + self.RESOURCE_NAME + "/{0}".format(id),
+            f"{self.URI_BASE}{self.RESOURCE_NAME}/{id}",
             params=params,
             headers=self._headers,
         )

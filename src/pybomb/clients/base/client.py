@@ -6,7 +6,6 @@ import pkg_resources
 from requests import Response as RequestsResponse
 from requests.exceptions import HTTPError
 
-
 from pybomb.exceptions import (
     BadRequestException,
     InvalidFilterFieldException,
@@ -46,9 +45,7 @@ class Client(ABC):
         """
         self.api_key = api_key
         self._headers = {
-            "User-Agent": "Pybomb {0}".format(
-                pkg_resources.require("pybomb")[0].version
-            )
+            "User-Agent": f'Pybomb {pkg_resources.require("pybomb")[0].version}'
         }
 
     def _validate_return_fields(self, return_fields: List[str]) -> None:
@@ -64,7 +61,7 @@ class Client(ABC):
         for return_field in return_fields:
             if return_field not in self.RESPONSE_FIELD_MAP:
                 raise InvalidReturnFieldException(
-                    '"{0}" is an invalid return field'.format(return_field)
+                    f'"{return_field}" is an invalid return field'
                 )
 
     def _validate_sort_field(self, sort_by: str) -> None:
@@ -80,9 +77,7 @@ class Client(ABC):
             sort_by not in self.RESPONSE_FIELD_MAP
             or not self.RESPONSE_FIELD_MAP[sort_by].is_sort
         ):
-            raise InvalidSortFieldException(
-                '"{0}" is an invalid sort field'.format(sort_by)
-            )
+            raise InvalidSortFieldException(f'"{sort_by}" is an invalid sort field')
 
     def _validate_filter_fields(self, filter_by: Dict[str, Union[str, int]]) -> None:
         """Validate the given filter fields against those allowed on the resource.
@@ -100,7 +95,7 @@ class Client(ABC):
                 or not self.RESPONSE_FIELD_MAP[filter_field].is_filter
             ):
                 raise InvalidFilterFieldException(
-                    '"{0}" is an invalid filter field'.format(filter_field)
+                    f'"{filter_field}" is an invalid filter field'
                 )
 
     @staticmethod
@@ -114,11 +109,7 @@ class Client(ABC):
             A string containing the filters in the format required by GB API
         """
         return ",".join(
-            [
-                "{0}:{1}".format(key, value)
-                for key, value in filter_by.items()
-                if value is not None
-            ]
+            [f"{key}:{value}" for key, value in filter_by.items() if value is not None]
         )
 
     def _query(self, params: Dict[str, Union[str, int]]) -> Response:
@@ -168,7 +159,5 @@ class Client(ABC):
         response_data = response.json()
         if response_data["status_code"] != self.RESPONSE_STATUS_OK:
             raise InvalidResponseException(
-                "Response code {0}: {1}".format(
-                    response_data["status_code"], response_data["error"]
-                )
+                f'Response code {response_data["status_code"]}: {response_data["error"]}'
             )
