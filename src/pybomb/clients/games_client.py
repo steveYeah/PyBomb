@@ -2,7 +2,7 @@
 
 https://www.giantbomb.com/api/documentation#toc-0-17
 """
-from typing import Optional
+from typing import Dict, Optional, Union
 
 from pybomb.clients.base.client import ResponseParam
 from pybomb.clients.base.search_client import SearchClient
@@ -57,9 +57,8 @@ class GamesClient(SearchClient):
         Returns:
              A PyBomb Response containg the results of the search
         """
-        if platform is None:
-            query_filter = f"name:{name}"
-        else:
-            query_filter = f"name:{name},platforms:{platform}"
+        filter_by: Dict[str, Union[str, int]] = {"name": name}
+        if platform is not None:
+            filter_by["platforms"] = platform
 
-        return self._quick_search(query_filter, desc, sort_by)
+        return self.search(filter_by=filter_by, sort_by=sort_by, desc=desc)

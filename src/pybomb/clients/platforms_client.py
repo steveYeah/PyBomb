@@ -50,5 +50,4 @@ class PlatformsClient(SearchClient):
         Returns:
              A PyBomb Response containg the results of the search
         """
-        query_filter = f"name:{name}"
-        return self._quick_search(query_filter, desc, sort_by)
+        return self.search(filter_by={"name": name}, sort_by=sort_by, desc=desc)
