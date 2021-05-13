@@ -2,16 +2,13 @@
 import importlib
 import re
 from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pkg_resources
 import pytest
 from requests.exceptions import HTTPError
-from requests.models import Response as RequestsResponse
 
-import pybomb
 from pybomb.clients.base.search_client import SearchClient
-from pybomb.clients.games_client import GamesClient
 from pybomb.exceptions import (
     BadRequestException,
     InvalidFilterFieldException,
@@ -29,53 +26,6 @@ test_clients = [
     "PlatformsClient",
     "GamesClient",
 ]
-
-
-@pytest.fixture
-def mock_requests_get() -> MagicMock:
-    """Request GET test mock."""
-    with patch("pybomb.clients.base.search_client.get") as req_mock:
-        yield req_mock
-
-
-@pytest.fixture
-def mock_response() -> MagicMock:
-    """Raw response test mock."""
-    mock_response = MagicMock(RequestsResponse)
-    mock_response.url = "https://fake.com"
-
-    mock_response.json.return_value = {
-        "status_code": 1,
-        "number_of_page_results": 1,
-        "number_of_total_results": 1,
-        "results": [],
-    }
-
-    return mock_response
-
-
-class TestGamesClient:
-    """GamesClient specific tests."""
-
-    def test_search_with_platform(
-        self, mock_requests_get: MagicMock, mock_response: MagicMock
-    ) -> None:
-        """Test search with a platform filter."""
-        games_client = GamesClient("fake_key")
-        mock_requests_get.return_value = mock_response
-
-        res = games_client.quick_search("game name", pybomb.PS1)
-
-        assert isinstance(res, Response)
-        mock_requests_get.assert_called_once_with(
-            "http://www.giantbomb.com/api/games",
-            params={
-                "filter": f"name:game name,platforms:{pybomb.PS1}",
-                "api_key": "fake_key",
-                "format": "json",
-            },
-            headers={"User-Agent": "Pybomb {}".format(version)},
-        )
 
 
 @pytest.mark.parametrize("test_client", test_clients)
