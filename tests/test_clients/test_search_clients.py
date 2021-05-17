@@ -29,7 +29,7 @@ test_clients = [
 
 
 @pytest.mark.parametrize("test_client", test_clients)
-class TestSearchClient:
+class TestSearchClients:
     """Tests and fixtures for the Clients."""
 
     @pytest.fixture
