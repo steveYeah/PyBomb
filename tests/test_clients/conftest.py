@@ -1,4 +1,5 @@
 """Shared fixtures."""
+from typing import Generator
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -6,7 +7,7 @@ from requests.models import Response as RequestsResponse
 
 
 @pytest.fixture
-def mock_requests_get() -> MagicMock:
+def mock_requests_get() -> Generator[MagicMock, None, None]:
     """Request GET test mock."""
     with patch("pybomb.clients.base.search_client.get") as req_mock:
         yield req_mock

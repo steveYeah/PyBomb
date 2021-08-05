@@ -20,7 +20,7 @@ class TestGamesClient:
         games_client = GamesClient("fake_key")
         mock_requests_get.return_value = mock_response
 
-        res = games_client.quick_search("game name", pybomb.PS1)
+        res = games_client.quick_search("game name", platform=pybomb.PS1)
 
         assert isinstance(res, Response)
         mock_requests_get.assert_called_once_with(

@@ -63,3 +63,4 @@ config/logging.yaml
 
 #Dev environment
 *.swp
+.vim/

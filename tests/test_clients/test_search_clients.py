@@ -17,15 +17,12 @@ from pybomb.exceptions import (
     InvalidSortFieldException,
 )
 from pybomb.response import Response
+from .helpers import get_clients
 
 version = pkg_resources.require("pybomb")[0].version
 client_pattern = re.compile(r"(?<!^)(?=[A-Z])")
 
-# TODO: Needs to move to a YAML file for editing by code
-test_clients = [
-    "PlatformsClient",
-    "GamesClient",
-]
+test_clients = get_clients("search_client")
 
 
 @pytest.mark.parametrize("test_client", test_clients)

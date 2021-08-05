@@ -35,6 +35,7 @@ flake8-annotations = "^2.3.0"
 mypy = "^0.782"
 typeguard = "^2.9.1"
 sphinx-autodoc-typehints = "^1.11.0"
+PyYAML = "^5.4.1"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]

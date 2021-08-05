@@ -1,6 +1,7 @@
 """Tests for the PyBomb FetchClient."""
 import importlib
 import re
+from typing import Generator
 from unittest.mock import MagicMock, patch
 
 import pkg_resources
@@ -15,14 +16,13 @@ from pybomb.exceptions import (
     InvalidReturnFieldException,
 )
 from pybomb.response import Response
+from .helpers import get_clients
 
 
 version = pkg_resources.require("pybomb")[0].version
 client_pattern = re.compile(r"(?<!^)(?=[A-Z])")
 
-test_clients = [
-    "GameClient",
-]
+test_clients = get_clients("fetch_client")
 
 
 @pytest.mark.parametrize("test_client", test_clients)
@@ -30,7 +30,7 @@ class TestFetchClients:
     """Tests and fixtures for the FetchClient."""
 
     @pytest.fixture
-    def mock_requests_get(self) -> MagicMock:
+    def mock_requests_get(self) -> Generator[MagicMock, None, None]:
         """Request GET test mock."""
         with patch("pybomb.clients.base.fetch_client.get") as req_mock:
             yield req_mock
