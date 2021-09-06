@@ -15,3 +15,4 @@ For more details, and examples of use, take a look at the individual clients:
 
    gamesclient
    gameclient
+   platformsclient

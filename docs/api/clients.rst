@@ -23,7 +23,7 @@ game_client
     :show-inheritance:
 
 platforms_client
------------
+----------------
 
 .. automodule:: pybomb.clients.platforms_client
     :members:
