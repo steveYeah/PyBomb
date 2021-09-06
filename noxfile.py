@@ -17,6 +17,7 @@ def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> Non
             "poetry",
             "export",
             "--dev",
+            "--without-hashes",
             "--format=requirements.txt",
             f"--output={requirements.name}",
             external=True,
@@ -38,9 +39,15 @@ def tests(session: Session) -> None:
     args = session.posargs or ["--cov"]
     session.run("poetry", "install", "--no-dev", external=True)
     install_with_constraints(
-        session, "coverage[toml]", "pytest", "pytest-cov", "typeguard"
+        session, "coverage[toml]", "pytest", "pytest-cov", "typeguard", "pyyaml"
     )
-    session.run("pytest", f"--typeguard-packages={package}", *args)
+
+    # Currently typeguard explodes when it reflects NamedTuple objects
+    # in 3.6 and 3.7. Skip for now
+    if session.python in ["3.6", "3.7"]:
+        session.run("pytest", *args)
+    else:
+        session.run("pytest", f"--typeguard-packages={package}", *args)
 
 
 @nox.session(python=["3.6", "3.7", "3.8"])

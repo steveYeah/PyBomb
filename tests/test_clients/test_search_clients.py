@@ -1,13 +1,14 @@
-"""Tests for the PyBomb GamesClient."""
+"""Tests for all PyBomb Search Clients."""
+import importlib
+import re
 from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pkg_resources
 import pytest
 from requests.exceptions import HTTPError
-from requests.models import Response as RequestsResponse
 
-from pybomb.clients.platforms_client import PlatformsClient
+from pybomb.clients.base.search_client import SearchClient
 from pybomb.exceptions import (
     BadRequestException,
     InvalidFilterFieldException,
@@ -16,73 +17,61 @@ from pybomb.exceptions import (
     InvalidSortFieldException,
 )
 from pybomb.response import Response
+from .helpers import get_clients
 
 version = pkg_resources.require("pybomb")[0].version
+client_pattern = re.compile(r"(?<!^)(?=[A-Z])")
+
+test_clients = get_clients("search_client")
 
 
-class TestPlaformsClient:
-    """Tests and fixtures for the PlatformsClient."""
-
-    @pytest.fixture
-    def mock_requests_get(self) -> MagicMock:
-        """Request GET test mock."""
-        with patch("pybomb.clients.base.search_client.get") as req_mock:
-            yield req_mock
+@pytest.mark.parametrize("test_client", test_clients)
+class TestSearchClients:
+    """Tests and fixtures for the Clients."""
 
     @pytest.fixture
-    def mock_response(self) -> MagicMock:
-        """Raw response test mock."""
-        mock_response = MagicMock(RequestsResponse)
-        mock_response.url = "https://fake.com"
-
-        mock_response.json.return_value = {
-            "status_code": 1,
-            "number_of_page_results": 1,
-            "number_of_total_results": 1,
-            "results": [{"id": 1, "name": "Playstation"}],
-        }
-
-        return mock_response
-
-    @pytest.fixture
-    def platforms_client(
-        self, mock_response: MagicMock, mock_requests_get: MagicMock
-    ) -> PlatformsClient:
-        """Test mock PlatformsClient.
+    def search_client(
+        self, test_client: str, mock_response: MagicMock, mock_requests_get: MagicMock,
+    ) -> SearchClient:
+        """Test mock SearchClient.
 
         Will mock request to GB API.
         """
-        mock_requests_get.return_value = mock_response
-        platforms_client = PlatformsClient("fake_key")
+        client_module_name = client_pattern.sub("_", test_client).lower()
+        client_module = importlib.import_module(f"pybomb.clients.{client_module_name}")
+        test_client_class = getattr(client_module, test_client)
 
-        return platforms_client
+        mock_requests_get.return_value = mock_response
+        search_client = test_client_class("fake_key")
+
+        return search_client
 
     @pytest.mark.parametrize(
         "search_method, call_params",
-        (("quick_search", "Playstation"), ("search", {"name": "Playstation"})),
+        (("quick_search", "Something"), ("search", {"name": "Something"})),
     )
     def test_bad_giantbomb_request(
         self,
         search_method: str,
         call_params: Any,
-        platforms_client: PlatformsClient,
+        search_client: SearchClient,
         mock_response: MagicMock,
     ) -> None:
         """Test bad request errors are correctly handled."""
         mock_response.raise_for_status.side_effect = HTTPError("Test error")
 
         with pytest.raises(BadRequestException):
-            getattr(platforms_client, search_method)(call_params)
+            getattr(search_client, search_method)(call_params)
 
     @pytest.mark.parametrize(
         "search_method, call_params",
-        (("quick_search", "Playstation"), ("search", {"name": "Playstation"})),
+        (("quick_search", "Something"), ("search", {"name": "Something"})),
     )
     def test_bad_giantbomb_response(
         self,
         search_method: str,
         call_params: Any,
-        platforms_client: PlatformsClient,
+        search_client: SearchClient,
         mock_response: MagicMock,
     ) -> None:
         """Test bad response errors are correctly handled."""
@@ -92,22 +81,22 @@ class TestPlaformsClient:
         mock_response.json.return_value = mock_response_json
 
         with pytest.raises(InvalidResponseException):
-            getattr(platforms_client, search_method)(call_params)
+            getattr(search_client, search_method)(call_params)
 
     class TestGeneral:
         """General tests for the client across methods."""
 
         def test_use_json_return_format(
-            self, platforms_client: PlatformsClient, mock_requests_get: MagicMock
+            self, search_client: SearchClient, mock_requests_get: MagicMock,
         ) -> None:
             """Test JSON format is used in GB API call."""
-            res = platforms_client.quick_search("platform name")
+            res = search_client.quick_search("name")
             assert isinstance(res, Response)
 
             mock_requests_get.assert_called_once_with(
-                "http://www.giantbomb.com/api/platforms",
+                f"http://www.giantbomb.com/api/{search_client.RESOURCE_NAME}",
                 params={
-                    "filter": "name:platform name",
+                    "filter": "name:name",
                     "api_key": "fake_key",
                     "format": "json",
                 },
@@ -119,12 +108,12 @@ class TestPlaformsClient:
 
         def test_search(
             self,
-            platforms_client: PlatformsClient,
+            search_client: SearchClient,
             mock_response: MagicMock,
             mock_requests_get: MagicMock,
         ) -> None:
             """Test response and API call are as expected."""
-            res = platforms_client.quick_search("platform name")
+            res = search_client.quick_search("name")
 
             assert isinstance(res, Response)
             assert res.uri == mock_response.url
@@ -142,9 +131,9 @@ class TestPlaformsClient:
             )
 
             mock_requests_get.assert_called_once_with(
-                "http://www.giantbomb.com/api/platforms",
+                f"http://www.giantbomb.com/api/{search_client.RESOURCE_NAME}",
                 params={
-                    "filter": "name:platform name",
+                    "filter": "name:name",
                     "api_key": "fake_key",
                     "format": "json",
                 },
@@ -158,19 +147,19 @@ class TestPlaformsClient:
             self,
             sort_dec: bool,
             sort_direction: str,
-            platforms_client: PlatformsClient,
+            search_client: SearchClient,
             mock_requests_get: MagicMock,
         ) -> None:
             """Test search with sort order and direction."""
-            res = platforms_client.quick_search(
-                "platform name", sort_by="date_added", desc=sort_dec
+            res = search_client.quick_search(
+                "name", sort_by="date_added", desc=sort_dec
             )
             assert isinstance(res, Response)
 
             mock_requests_get.assert_called_once_with(
-                "http://www.giantbomb.com/api/platforms",
+                f"http://www.giantbomb.com/api/{search_client.RESOURCE_NAME}",
                 params={
-                    "filter": "name:platform name",
+                    "filter": "name:name",
                     "sort": "date_added:{0}".format(sort_direction),
                     "api_key": "fake_key",
                     "format": "json",
@@ -178,22 +167,22 @@ class TestPlaformsClient:
                 headers={"User-Agent": "Pybomb {}".format(version)},
             )
 
-        def test_invaild_sort(self, platforms_client: PlatformsClient) -> None:
+        def test_invaild_sort(self, search_client: SearchClient) -> None:
             """Test use of invalid sort field is caught and handled correctly."""
             with pytest.raises(InvalidSortFieldException):
-                platforms_client.quick_search("platform name", sort_by="aliases")
+                search_client.quick_search("name", sort_by="aliases")
 
     class TestSearch:
         """Test full seach method."""
 
         def test_filter_search(
             self,
-            platforms_client: PlatformsClient,
+            search_client: SearchClient,
             mock_response: MagicMock,
             mock_requests_get: MagicMock,
         ) -> None:
             """Test search filters are applied to GB API call."""
-            res = platforms_client.search({"name": "platform name"})
+            res = search_client.search({"name": "name"})
 
             assert isinstance(res, Response)
             assert res.uri == mock_response.url
@@ -211,33 +200,31 @@ class TestPlaformsClient:
             )
 
             mock_requests_get.assert_called_once_with(
-                "http://www.giantbomb.com/api/platforms",
+                f"http://www.giantbomb.com/api/{search_client.RESOURCE_NAME}",
                 params={
-                    "filter": "name:platform name",
+                    "filter": "name:name",
                     "api_key": "fake_key",
                     "format": "json",
                 },
                 headers={"User-Agent": "Pybomb {}".format(version)},
             )
 
-        def test_invalid_filters(self, platforms_client: PlatformsClient) -> None:
+        def test_invalid_filters(self, search_client: SearchClient) -> None:
             """Test use of invalid filters are caught and handled correctly."""
             with pytest.raises(InvalidFilterFieldException):
-                platforms_client.search({"api_detail_url": "something"})
+                search_client.search({"api_detail_url": "something"})
 
         def test_can_specify_return_fields(
-            self, platforms_client: PlatformsClient, mock_requests_get: MagicMock
+            self, search_client: SearchClient, mock_requests_get: MagicMock
         ) -> None:
             """Test return fields are applied to GB API call correctly."""
-            res = platforms_client.search(
-                {"name": "platform name"}, return_fields=["id", "name"]
-            )
+            res = search_client.search({"name": "name"}, return_fields=["id", "name"])
             assert isinstance(res, Response)
 
             mock_requests_get.assert_called_once_with(
-                "http://www.giantbomb.com/api/platforms",
+                f"http://www.giantbomb.com/api/{search_client.RESOURCE_NAME}",
                 params={
-                    "filter": "name:platform name",
+                    "filter": "name:name",
                     "field_list": "id,name",
                     "api_key": "fake_key",
                     "format": "json",
@@ -245,12 +232,10 @@ class TestPlaformsClient:
                 headers={"User-Agent": "Pybomb {}".format(version)},
             )
 
-        def test_invalid_return_fields(self, platforms_client: PlatformsClient) -> None:
+        def test_invalid_return_fields(self, search_client: SearchClient) -> None:
             """Test use of invalid return fields are caught and handled correctly."""
             with pytest.raises(InvalidReturnFieldException):
-                platforms_client.search(
-                    {"name": "platform name"}, return_fields=["bad"]
-                )
+                search_client.search({"name": "name"}, return_fields=["bad"])
 
         @pytest.mark.parametrize(
             "sort_dec, sort_direction", [(True, "desc"), (False, "asc")]
@@ -259,19 +244,19 @@ class TestPlaformsClient:
             self,
             sort_dec: bool,
             sort_direction: str,
-            platforms_client: PlatformsClient,
+            search_client: SearchClient,
             mock_requests_get: MagicMock,
         ) -> None:
             """Test sort field is applied to GB API call correctly."""
-            res = platforms_client.search(
-                {"name": "platform name"}, sort_by="date_added", desc=sort_dec
+            res = search_client.search(
+                {"name": "name"}, sort_by="date_added", desc=sort_dec
             )
             assert isinstance(res, Response)
 
             mock_requests_get.assert_called_once_with(
-                "http://www.giantbomb.com/api/platforms",
+                f"http://www.giantbomb.com/api/{search_client.RESOURCE_NAME}",
                 params={
-                    "filter": "name:platform name",
+                    "filter": "name:name",
                     "sort": "date_added:{0}".format(sort_direction),
                     "api_key": "fake_key",
                     "format": "json",
@@ -279,22 +264,22 @@ class TestPlaformsClient:
                 headers={"User-Agent": "Pybomb {}".format(version)},
             )
 
-        def test_invaild_sort(self, platforms_client: PlatformsClient) -> None:
+        def test_invaild_sort(self, search_client: SearchClient) -> None:
             """Test use of invalid sort field is caught and handled correctly."""
             with pytest.raises(InvalidSortFieldException):
-                platforms_client.search({"name": "platform name"}, sort_by="company")
+                search_client.search({"name": "name"}, sort_by="company")
 
         def test_limit(
-            self, platforms_client: PlatformsClient, mock_requests_get: MagicMock
+            self, search_client: SearchClient, mock_requests_get: MagicMock
         ) -> None:
             """Test return limit is applied to GB API call correctly."""
-            res = platforms_client.search({"name": "platform name"}, limit=1)
+            res = search_client.search({"name": "name"}, limit=1)
             assert isinstance(res, Response)
 
             mock_requests_get.assert_called_once_with(
-                "http://www.giantbomb.com/api/platforms",
+                f"http://www.giantbomb.com/api/{search_client.RESOURCE_NAME}",
                 params={
-                    "filter": "name:platform name",
+                    "filter": "name:name",
                     "limit": 1,
                     "api_key": "fake_key",
                     "format": "json",
@@ -303,16 +288,16 @@ class TestPlaformsClient:
             )
 
         def test_offset(
-            self, platforms_client: PlatformsClient, mock_requests_get: MagicMock
+            self, search_client: SearchClient, mock_requests_get: MagicMock
         ) -> None:
             """Test offset is applied to GB API call correctly."""
-            res = platforms_client.search({"name": "platform name"}, offset=10)
+            res = search_client.search({"name": "name"}, offset=10)
             assert isinstance(res, Response)
 
             mock_requests_get.assert_called_once_with(
-                "http://www.giantbomb.com/api/platforms",
+                f"http://www.giantbomb.com/api/{search_client.RESOURCE_NAME}",
                 params={
-                    "filter": "name:platform name",
+                    "filter": "name:name",
                     "offset": 10,
                     "api_key": "fake_key",
                     "format": "json",

@@ -2,7 +2,7 @@
 
 https://www.giantbomb.com/api/documentation#toc-0-17
 """
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from pybomb.clients.base.client import ResponseParam
 from pybomb.clients.base.search_client import SearchClient
@@ -37,9 +37,11 @@ class GamesClient(SearchClient):
     def quick_search(
         self,
         name: str,
-        platform: Optional[int] = None,
         sort_by: Optional[str] = None,
         desc: bool = True,
+        platform: Optional[int] = None,
+        *args: Any,
+        **kwargs: Any,
     ) -> Response:
         """Search with a simplier API.
 
@@ -53,6 +55,8 @@ class GamesClient(SearchClient):
             sort_by: The field to sort the items in the reponse by.
                 These will be validated against the availiable sort fields.
             desc: If sort direction is DESC or not (ASC). Defaults to True
+            args: Additional arguments.
+            kwargs: Additional keyword arguments.
 
         Returns:
              A PyBomb Response containg the results of the search

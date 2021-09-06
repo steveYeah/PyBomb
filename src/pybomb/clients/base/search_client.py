@@ -1,4 +1,5 @@
 """Base client to extend to create search clients for endpoints of the GiantBomb API."""
+from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Union
 
 from requests import get, Response as RequestsResponse
@@ -51,6 +52,18 @@ class SearchClient(Client):
         response = self._query(search_params)
 
         return response
+
+    @abstractmethod
+    def quick_search(
+        self,
+        name: str,
+        sort_by: Optional[str] = None,
+        desc: bool = True,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Response:
+        """Search with a simplier API."""
+        ...  # pragma: no cover
 
     def _apply_return_fields(
         self, return_fields: Optional[List], search_params: Dict[str, Union[str, int]],
