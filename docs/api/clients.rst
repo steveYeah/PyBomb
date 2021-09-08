@@ -22,6 +22,14 @@ game_client
     :undoc-members:
     :show-inheritance:
 
+platforms_client
+----------------
+
+.. automodule:: pybomb.clients.platforms_client
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 base
 ====
 

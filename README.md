@@ -20,6 +20,7 @@ This will go into version 1.0 when all resources are supported.
 
   - games
   - game
+  - platforms
 
 ## Support OSS, and me :)
 If you find this project useful, please feel free to [buy me a coffee](https://ko-fi.com/steveyeah)

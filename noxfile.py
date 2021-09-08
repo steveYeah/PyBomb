@@ -33,7 +33,7 @@ def black(session: Session) -> None:
     session.run("black", *args)
 
 
-@nox.session(python=["3.6", "3.7", "3.8"])
+@nox.session(python=["3.6", "3.7", "3.8", "3.9"])
 def tests(session: Session) -> None:
     """Run test suite."""
     args = session.posargs or ["--cov"]
@@ -50,7 +50,7 @@ def tests(session: Session) -> None:
         session.run("pytest", f"--typeguard-packages={package}", *args)
 
 
-@nox.session(python=["3.6", "3.7", "3.8"])
+@nox.session(python=["3.6", "3.7", "3.8", "3.9"])
 def lint(session: Session) -> None:
     """Lint using flake8."""
     args = session.posargs or locations
@@ -101,7 +101,7 @@ def docs(session: Session) -> None:
     session.run("sphinx-build", "docs", "docs/_build")
 
 
-@nox.session(python=["3.7", "3.8"])
+@nox.session(python=["3.7", "3.8", "3.9"])
 def mypy(session: Session) -> None:
     """Run static type checker."""
     args = session.posargs or locations
