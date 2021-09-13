@@ -19,6 +19,7 @@ from pybomb.exceptions import (
     InvalidSortFieldException,
     PybombException,
 )
+from pybomb.factory import ClientFactory
 
 try:
     __version__ = version(__name__)
