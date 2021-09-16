@@ -41,3 +41,9 @@ class BadRequestException(ClientException):
     """Exception thrown when attempting to send a bad request."""
 
     pass
+
+
+class InvalidClientException(ClientException):
+    """Exception thrown when attempting to import a non-defined client."""
+
+    pass
